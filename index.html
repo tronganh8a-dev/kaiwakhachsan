@@ -1,0 +1,997 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2e4a;
+    --gold: #c9973a;
+    --gold-light: #f0d9a8;
+    --cream: #faf8f4;
+    --jade: #2d7a6b;
+    --jade-light: #e0f2ee;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --text: var(--color-text-primary);
+    --muted: var(--color-text-secondary);
+    --bg: var(--color-background-primary);
+    --bg2: var(--color-background-secondary);
+    --border: var(--color-border-tertiary);
+    --font-jp: 'Noto Sans JP', sans-serif;
+    --font-vn: 'Be Vietnam Pro', sans-serif;
+  }
+
+  #app { font-family: var(--font-vn); padding: 0; }
+
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+  .header-icon { font-size: 28px; }
+  .header-title { font-size: 18px; font-weight: 600; letter-spacing: 0.01em; }
+  .header-sub { font-size: 12px; opacity: 0.7; margin-top: 2px; font-family: var(--font-jp); }
+
+  .progress-bar {
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .progress-label { font-size: 12px; color: var(--muted); min-width: 60px; text-align: right; }
+
+  .scenario-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 0.5px solid var(--border);
+    overflow-x: auto;
+    background: var(--bg2);
+  }
+  .tab {
+    padding: 0.6rem 1rem;
+    font-size: 12px;
+    font-family: var(--font-vn);
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--gold); font-weight: 600; }
+  .tab .done-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--jade); display: none; }
+  .tab.completed .done-dot { display: block; }
+
+  .content { padding: 1.25rem 1.5rem; }
+
+  .scenario-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--navy);
+    color: white;
+    border-radius: var(--border-radius-lg);
+  }
+  .scenario-emoji { font-size: 32px; flex-shrink: 0; }
+  .scenario-title { font-size: 16px; font-weight: 600; }
+  .scenario-jp { font-family: var(--font-jp); font-size: 13px; opacity: 0.8; margin-top: 3px; }
+  .scenario-desc { font-size: 12px; opacity: 0.65; margin-top: 4px; }
+
+  .step-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .step-btn {
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 0.5px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .step-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+  .step-btn.done { background: var(--jade-light); color: var(--jade); border-color: var(--jade); }
+
+  .learn-section { margin-bottom: 1rem; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label i { font-size: 14px; }
+
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .vocab-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-md);
+    padding: 0.6rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .vocab-card:hover { border-color: var(--gold); }
+  .vocab-card .jp { font-family: var(--font-jp); font-size: 14px; font-weight: 500; color: var(--text); }
+  .vocab-card .vn { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .vocab-card .flip-hint { font-size: 10px; color: var(--gold); position: absolute; top: 6px; right: 8px; }
+  .vocab-card.flipped { background: var(--navy); border-color: var(--navy); }
+  .vocab-card.flipped .jp { color: var(--gold-light); }
+  .vocab-card.flipped .vn { color: rgba(255,255,255,0.7); }
+
+  .pattern-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 13px; }
+  .pattern-table th {
+    background: var(--navy);
+    color: white;
+    padding: 6px 10px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .pattern-table th:first-child { border-radius: var(--border-radius-md) 0 0 0; }
+  .pattern-table th:last-child { border-radius: 0 var(--border-radius-md) 0 0; }
+  .pattern-table td { padding: 7px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+  .pattern-table tr:nth-child(even) td { background: var(--bg2); }
+  .pattern-table .jp-cell { font-family: var(--font-jp); color: var(--text); }
+  .pattern-table .vn-cell { color: var(--muted); font-size: 12px; }
+
+  .dialog-box {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .dialog-header {
+    background: var(--navy);
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.06em;
+  }
+  .dialog-row {
+    display: flex;
+    gap: 0;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.1s;
+  }
+  .dialog-row:last-child { border-bottom: none; }
+  .dialog-row.nv .role-badge { background: #e8f0fa; color: #1a2e4a; }
+  .dialog-row.kh .role-badge { background: #fef3e2; color: #8b5a0a; }
+  .role-badge {
+    width: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .dialog-content { padding: 8px 10px; flex: 1; }
+  .dialog-content .jp { font-family: var(--font-jp); font-size: 13px; color: var(--text); line-height: 1.6; }
+  .dialog-content .vn { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+  .practice-area {
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .practice-header {
+    background: var(--jade);
+    padding: 8px 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .practice-header .mode-badge {
+    font-size: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .practice-body { padding: 1rem; }
+
+  .quiz-question {
+    font-family: var(--font-jp);
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
+    text-align: center;
+  }
+  .quiz-hint { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 0.75rem; }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0.75rem; }
+  .option-btn {
+    padding: 0.6rem 0.75rem;
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-md);
+    background: var(--bg);
+    font-size: 12px;
+    font-family: var(--font-vn);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--navy); }
+  .option-btn.correct { background: var(--jade-light); border-color: var(--jade); color: var(--jade); }
+  .option-btn.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .option-btn.revealed { background: var(--jade-light); border-color: var(--jade); color: var(--jade); }
+
+  .fill-input-wrap { display: flex; gap: 8px; margin-bottom: 0.75rem; }
+  .fill-input {
+    flex: 1;
+    border: 0.5px solid var(--border);
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 0.75rem;
+    font-family: var(--font-jp);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .fill-input:focus { outline: none; border-color: var(--navy); }
+  .check-btn {
+    padding: 0.5rem 1rem;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-vn);
+  }
+  .check-btn:hover { opacity: 0.85; }
+
+  .feedback-msg {
+    padding: 8px 10px;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    margin-bottom: 0.75rem;
+    display: none;
+  }
+  .feedback-msg.show { display: block; }
+  .feedback-msg.ok { background: var(--jade-light); color: var(--jade); }
+  .feedback-msg.wrong { background: var(--red-light); color: var(--red); }
+
+  .roleplay-turn {
+    margin-bottom: 0.75rem;
+  }
+  .turn-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .turn-label.your-turn { color: var(--jade); }
+  .turn-label.their-turn { color: var(--gold); }
+  .turn-bubble {
+    padding: 8px 12px;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .turn-bubble.customer { background: #fef3e2; color: #5c3d11; font-family: var(--font-jp); }
+  .turn-bubble.your-response {
+    border: 0.5px dashed var(--jade);
+    background: var(--jade-light);
+    color: var(--jade);
+    font-family: var(--font-jp);
+    cursor: pointer;
+  }
+  .turn-bubble.hidden-resp {
+    border: 0.5px dashed var(--border);
+    background: var(--bg2);
+    color: transparent;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+  .turn-bubble.hidden-resp::after {
+    content: "タップして確認 — Nhấn để xem đáp án";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--font-vn);
+  }
+  .turn-bubble.revealed { color: var(--text); }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+  .btn-secondary {
+    padding: 6px 14px;
+    border: 0.5px solid var(--border);
+    background: var(--bg);
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    font-family: var(--font-vn);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .btn-primary {
+    padding: 6px 16px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--font-vn);
+    cursor: pointer;
+  }
+  .btn-gold {
+    padding: 6px 16px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--font-vn);
+    cursor: pointer;
+  }
+
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--gold-light);
+    color: #7a5a10;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+
+  .completion-panel {
+    background: var(--jade-light);
+    border: 0.5px solid var(--jade);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .completion-panel.show { display: block; }
+  .completion-panel h3 { font-size: 16px; color: var(--jade); margin-bottom: 6px; }
+  .completion-panel p { font-size: 12px; color: var(--muted); }
+
+  .tip-box {
+    background: #fffbf0;
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 12px;
+    color: #6b4c0a;
+  }
+  .tip-box strong { color: #8b5e0a; }
+
+  .hidden { display: none !important; }
+</style>
+
+<h2 class="sr-only">Luyện kaiwa tiếng Nhật ngành khách sạn — Buổi 1: Check-in và đặt phòng</h2>
+
+<div id="app">
+  <div class="header">
+    <div class="header-icon"><i class="ti ti-building" aria-hidden="true"></i></div>
+    <div>
+      <div class="header-title">Kaiwa Khách Sạn — Buổi 1</div>
+      <div class="header-jp">チェックイン・予約対応 の会話練習</div>
+    </div>
+    <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+      <span class="score-badge"><i class="ti ti-star" aria-hidden="true" style="font-size:13px"></i> <span id="score-display">0</span> điểm</span>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <span style="font-size:12px; color:var(--muted)">Tiến độ</span>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <span class="progress-label" id="prog-label">0 / 3 xong</span>
+  </div>
+
+  <div class="scenario-tabs" id="tabs">
+    <button class="tab active" onclick="switchScenario(0)">
+      <div class="done-dot" id="dot-0"></div>
+      <i class="ti ti-door-enter" aria-hidden="true"></i> Tình huống 1
+    </button>
+    <button class="tab" onclick="switchScenario(1)">
+      <div class="done-dot" id="dot-1"></div>
+      <i class="ti ti-phone" aria-hidden="true"></i> Tình huống 2
+    </button>
+    <button class="tab" onclick="switchScenario(2)">
+      <div class="done-dot" id="dot-2"></div>
+      <i class="ti ti-x" aria-hidden="true"></i> Tình huống 3
+    </button>
+  </div>
+
+  <div class="content" id="main-content"></div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    id: 0,
+    icon: "ti-door-enter",
+    title: "Đón khách & Check-in",
+    jp: "お客様のチェックイン対応",
+    desc: "Khách đến lễ tân, có đặt phòng trước. Làm thủ tục nhận phòng.",
+    vocab: [
+      { jp: "ご予約（ごよやく）", vn: "Đặt phòng (kính ngữ)" },
+      { jp: "いらっしゃいませ", vn: "Xin chào / Kính mời quý khách" },
+      { jp: "パスポートのご提示", vn: "Xuất trình hộ chiếu (kính ngữ)" },
+      { jp: "ルームキー", vn: "Chìa khóa phòng" },
+      { jp: "かしこまりました", vn: "Vâng ạ (kính ngữ cao)" },
+      { jp: "ごゆっくりおくつろぎください", vn: "Kính chúc nghỉ ngơi thoải mái" },
+    ],
+    patterns: [
+      { jp: "いらっしゃいませ。ご予約はございますか？", vn: "Xin chào quý khách. Quý khách có đặt phòng trước không ạ?" },
+      { jp: "お名前をお聞かせいただけますでしょうか。", vn: "Xin cho tôi biết họ tên của quý khách ạ?" },
+      { jp: "〇〇様でいらっしゃいますね。", vn: "Thưa ông/bà [tên]. Đúng rồi ạ." },
+      { jp: "パスポートのご提示をお願いいたします。", vn: "Xin vui lòng xuất trình hộ chiếu ạ." },
+      { jp: "こちらがルームキーでございます。", vn: "Đây là chìa khóa phòng của quý khách ạ." },
+    ],
+    dialog: [
+      { role: "NV", jp: "いらっしゃいませ。どのようなご用件でしょうか。", vn: "Xin chào quý khách. Quý khách cần gì ạ?" },
+      { role: "KH", jp: "チェックインをしたいんですが。", vn: "Tôi muốn nhận phòng ạ." },
+      { role: "NV", jp: "ありがとうございます。ご予約はございますか？", vn: "Cảm ơn quý khách. Quý khách có đặt phòng trước không ạ?" },
+      { role: "KH", jp: "はい、山田と申します。", vn: "Vâng, tôi họ Yamada ạ." },
+      { role: "NV", jp: "山田様でいらっしゃいますね。少々お待ちいただけますでしょうか。", vn: "Thưa ông/bà Yamada. Xin vui lòng đợi một chút ạ." },
+      { role: "NV", jp: "お待たせいたしました。パスポートのご提示をお願いいたします。", vn: "Xin lỗi đã để đợi. Xin vui lòng xuất trình hộ chiếu ạ." },
+      { role: "NV", jp: "こちらがルームキーでございます。305号室、3階でございます。", vn: "Đây là chìa khóa phòng ạ. Phòng 305 tầng 3 ạ." },
+      { role: "NV", jp: "ごゆっくりおくつろぎください。", vn: "Kính chúc quý khách nghỉ ngơi thoải mái ạ." },
+    ],
+    quiz: [
+      {
+        type: "choice",
+        q: "お客様が来た時、最初に何と言いますか？",
+        hint: "Khách đến, câu đầu tiên nói gì?",
+        options: ["いらっしゃいませ。", "おはようございます。", "しつれいします。", "ありがとうございます。"],
+        answer: 0
+      },
+      {
+        type: "choice",
+        q: "外国のお客様には必ず何をお願いしますか？",
+        hint: "Khách nước ngoài phải xuất trình gì theo luật Nhật?",
+        options: ["クレジットカード", "パスポートのご提示", "ビザのコピー", "名刺"],
+        answer: 1
+      },
+      {
+        type: "fill",
+        q: "「はい、分かりました」の敬語は？",
+        hint: "Cách nói 'Vâng, tôi hiểu rồi' bằng kính ngữ cao là gì?",
+        answer: "かしこまりました",
+        altAnswers: ["かしこまりました。"]
+      }
+    ],
+    roleplay: [
+      { role: "KH", jp: "すみません、チェックインをお願いします。", vn: "Xin lỗi, tôi muốn nhận phòng ạ." },
+      { role: "NV", jp: "いらっしゃいませ。ご予約はございますか？", vn: "Xin chào quý khách. Quý khách có đặt phòng trước không ạ?" },
+      { role: "KH", jp: "はい、田中と申します。", vn: "Vâng, tôi họ Tanaka ạ." },
+      { role: "NV", jp: "田中様でいらっしゃいますね。パスポートのご提示をお願いいたします。", vn: "Thưa ông/bà Tanaka. Xin vui lòng xuất trình hộ chiếu ạ." },
+      { role: "KH", jp: "はい、どうぞ。", vn: "Vâng, mời anh/chị." },
+      { role: "NV", jp: "ありがとうございます。こちらがルームキーでございます。ごゆっくりおくつろぎください。", vn: "Cảm ơn quý khách. Đây là chìa khóa phòng ạ. Kính chúc nghỉ ngơi thoải mái ạ." },
+    ]
+  },
+  {
+    id: 1,
+    icon: "ti-phone",
+    title: "Đặt phòng qua điện thoại",
+    jp: "電話での予約対応",
+    desc: "Khách gọi điện thoại hỏi phòng và đặt phòng. Xác nhận đầy đủ thông tin.",
+    vocab: [
+      { jp: "ご宿泊日（しゅくはくび）", vn: "Ngày lưu trú (kính ngữ)" },
+      { jp: "ご人数（にんずう）", vn: "Số người (kính ngữ)" },
+      { jp: "満室（まんしつ）", vn: "Hết phòng / Kín phòng" },
+      { jp: "空室（くうしつ）", vn: "Còn phòng trống" },
+      { jp: "ご予約を承りました", vn: "Chúng tôi đã nhận đặt phòng ạ" },
+      { jp: "少々お待ちください", vn: "Xin vui lòng đợi một chút ạ" },
+    ],
+    patterns: [
+      { jp: "はい、〇〇ホテルでございます。", vn: "Vâng, đây là khách sạn [tên] ạ." },
+      { jp: "ご宿泊日とご人数をお聞かせいただけますか。", vn: "Xin cho biết ngày lưu trú và số người ạ?" },
+      { jp: "大変申し訳ございませんが、その日は満室でございます。", vn: "Rất tiếc thưa quý khách, ngày đó đã hết phòng ạ." },
+      { jp: "ご予約を承りました。", vn: "Chúng tôi đã nhận đặt phòng ạ." },
+      { jp: "ご連絡先のお電話番号をお願いいたします。", vn: "Xin cho biết số điện thoại liên lạc ạ?" },
+    ],
+    dialog: [
+      { role: "NV", jp: "はい、グランドホテルでございます。", vn: "Vâng, đây là khách sạn Grand ạ." },
+      { role: "KH", jp: "部屋を予約したいんですが。", vn: "Tôi muốn đặt phòng ạ." },
+      { role: "NV", jp: "ありがとうございます。ご宿泊日とご人数をお聞かせいただけますでしょうか。", vn: "Cảm ơn quý khách. Xin cho biết ngày lưu trú và số người ạ?" },
+      { role: "KH", jp: "3月15日から2泊、2名でお願いします。", vn: "Từ 15/3, 2 đêm, 2 người ạ." },
+      { role: "NV", jp: "かしこまりました。少々お待ちください…お待たせいたしました。ツインルームでよろしいでしょうか。", vn: "Vâng ạ. Đợi một chút... Xin lỗi đã để đợi. Quý khách muốn phòng twin ạ?" },
+      { role: "KH", jp: "はい、お願いします。", vn: "Vâng, đúng ạ." },
+      { role: "NV", jp: "ご連絡先のお電話番号をお願いいたします。", vn: "Xin cho biết số điện thoại liên lạc ạ?" },
+      { role: "NV", jp: "3月15日から2泊、ツインルーム、お2名様でご予約を承りました。", vn: "Đặt phòng twin 2 người từ 15/3, 2 đêm. Chúng tôi đã nhận ạ." },
+    ],
+    quiz: [
+      {
+        type: "choice",
+        q: "電話に出た時、最初に何と言いますか？",
+        hint: "Khi nhấc máy điện thoại ở khách sạn?",
+        options: [
+          "もしもし、どなたですか。",
+          "はい、〇〇ホテルでございます。",
+          "いらっしゃいませ。",
+          "お電話ありがとうございます。"
+        ],
+        answer: 1
+      },
+      {
+        type: "choice",
+        q: "「その日は部屋がありません」の敬語は？",
+        hint: "Ngày đó không còn phòng, nói kính ngữ?",
+        options: [
+          "その日は部屋がないです。",
+          "大変申し訳ございませんが、その日は満室でございます。",
+          "すみません、満室です。",
+          "ごめんなさい、部屋がありません。"
+        ],
+        answer: 1
+      },
+      {
+        type: "fill",
+        q: "「分かりました、予約を受け付けます」の敬語は？（4文字）",
+        hint: "Câu xác nhận nhận đặt phòng bằng kính ngữ (phần cuối)",
+        answer: "承りました",
+        altAnswers: ["ご予約を承りました", "ご予約を承りました。"]
+      }
+    ],
+    roleplay: [
+      { role: "KH", jp: "あの、部屋を予約したいんですが。", vn: "Ừm, tôi muốn đặt phòng ạ." },
+      { role: "NV", jp: "ありがとうございます。ご宿泊日とご人数をお聞かせいただけますでしょうか。", vn: "Cảm ơn quý khách. Xin cho biết ngày lưu trú và số người ạ?" },
+      { role: "KH", jp: "5月10日から1泊、1名です。", vn: "Ngày 10/5, 1 đêm, 1 người ạ." },
+      { role: "NV", jp: "かしこまりました。シングルルームでよろしいでしょうか。", vn: "Vâng ạ. Quý khách muốn phòng single đúng không ạ?" },
+      { role: "KH", jp: "はい。いくらですか。", vn: "Vâng. Bao nhiêu tiền ạ?" },
+      { role: "NV", jp: "1泊8,000円でございます。ご連絡先のお電話番号をお願いいたします。", vn: "1 đêm 8.000 yên ạ. Xin cho biết số điện thoại liên lạc ạ?" },
+    ]
+  },
+  {
+    id: 2,
+    icon: "ti-x",
+    title: "Hủy / Thay đổi đặt phòng",
+    jp: "キャンセル・変更の対応",
+    desc: "Khách muốn hủy hoặc thay đổi ngày đặt. Thông báo chính sách hủy phòng.",
+    vocab: [
+      { jp: "キャンセル料（きゃんせるりょう）", vn: "Phí hủy phòng" },
+      { jp: "ノーショー", vn: "Không đến mà không báo trước" },
+      { jp: "変更（へんこう）", vn: "Thay đổi" },
+      { jp: "キャンセルポリシー", vn: "Chính sách hủy phòng" },
+      { jp: "宿泊日と予約者名", vn: "Ngày lưu trú và tên người đặt" },
+      { jp: "確認させていただきます", vn: "Xin phép để xác nhận ạ" },
+    ],
+    patterns: [
+      { jp: "大変申し訳ございませんが、キャンセル料が発生いたします。", vn: "Rất tiếc, sẽ có phát sinh phí hủy phòng ạ." },
+      { jp: "〇日前のキャンセルは〇%のキャンセル料がかかります。", vn: "Hủy trước … ngày mất … % phí ạ." },
+      { jp: "宿泊日と予約者名を確認させていただきます。", vn: "Xin phép xác nhận ngày lưu trú và tên người đặt ạ." },
+      { jp: "ご予約内容を変更することは可能でございます。", vn: "Chúng tôi có thể thay đổi nội dung đặt phòng ạ." },
+      { jp: "宿泊日のご変更でよろしいでしょうか。", vn: "Quý khách muốn thay đổi ngày lưu trú ạ?" },
+    ],
+    dialog: [
+      { role: "KH", jp: "あの、予約をキャンセルしたいんですが。", vn: "Ừm, tôi muốn hủy đặt phòng ạ." },
+      { role: "NV", jp: "かしこまりました。宿泊日と予約者名を確認させていただいてよろしいでしょうか。", vn: "Vâng ạ. Xin phép xác nhận ngày lưu trú và tên người đặt ạ?" },
+      { role: "KH", jp: "3月15日、山田です。", vn: "Ngày 15/3, họ Yamada ạ." },
+      { role: "NV", jp: "少々お待ちください…お待たせいたしました。大変申し訳ございませんが、2日前のキャンセルはキャンセル料が50%発生いたします。", vn: "Đợi một chút... Xin lỗi đã để đợi. Rất tiếc, hủy trước 2 ngày sẽ phát sinh phí 50% ạ." },
+      { role: "KH", jp: "そうですか…分かりました。", vn: "Vậy à... Tôi hiểu rồi ạ." },
+      { role: "NV", jp: "キャンセルのお手続きを進めてよろしいでしょうか。", vn: "Tôi xin tiến hành thủ tục hủy phòng ạ?" },
+      { role: "KH", jp: "はい、お願いします。", vn: "Vâng, xin nhờ ạ." },
+      { role: "NV", jp: "かしこまりました。キャンセルが完了いたしました。大変申し訳ございませんでした。", vn: "Vâng ạ. Hủy phòng đã hoàn tất. Thành thật xin lỗi quý khách ạ." },
+    ],
+    quiz: [
+      {
+        type: "choice",
+        q: "キャンセルの電話で、まず何を確認しますか？",
+        hint: "Điện thoại hủy phòng, trước tiên xác nhận gì?",
+        options: [
+          "お支払い方法",
+          "宿泊日と予約者名",
+          "部屋のタイプ",
+          "クレジットカード番号"
+        ],
+        answer: 1
+      },
+      {
+        type: "choice",
+        q: "「申し訳ありません、キャンセル料がかかります」の敬語は？",
+        hint: "Thông báo phí hủy bằng kính ngữ?",
+        options: [
+          "すみません、キャンセル料があります。",
+          "大変申し訳ございませんが、キャンセル料が発生いたします。",
+          "ごめんなさい、キャンセルはお金がいります。",
+          "キャンセル料を払ってください。"
+        ],
+        answer: 1
+      },
+      {
+        type: "fill",
+        q: "予約を変更することは（　　　）でございます。",
+        hint: "Điền vào chỗ trống: thay đổi đặt phòng là ... ạ",
+        answer: "可能",
+        altAnswers: ["可能（かのう）", "かのう"]
+      }
+    ],
+    roleplay: [
+      { role: "KH", jp: "すみません、予約の日付を変更したいんですが。", vn: "Xin lỗi, tôi muốn thay đổi ngày đặt phòng ạ." },
+      { role: "NV", jp: "かしこまりました。宿泊日と予約者名を確認させていただけますでしょうか。", vn: "Vâng ạ. Xin phép xác nhận ngày lưu trú và tên người đặt ạ?" },
+      { role: "KH", jp: "5月20日、鈴木です。", vn: "Ngày 20/5, họ Suzuki ạ." },
+      { role: "NV", jp: "少々お待ちください…ご変更は5月22日でよろしいでしょうか？", vn: "Đợi một chút... Quý khách muốn đổi sang ngày 22/5 ạ?" },
+      { role: "KH", jp: "はい、その日にお願いします。", vn: "Vâng, ngày đó ạ." },
+      { role: "NV", jp: "かしこまりました。5月22日にご変更いたしました。ご確認ありがとうございます。", vn: "Vâng ạ. Đã thay đổi sang ngày 22/5 rồi ạ. Cảm ơn quý khách đã xác nhận ạ." },
+    ]
+  }
+];
+
+let currentScenario = 0;
+let currentStep = 0;
+let scores = [0, 0, 0];
+let completed = [false, false, false];
+let quizAnswered = [[false,false,false],[false,false,false],[false,false,false]];
+let revealedRoleplay = {};
+
+function updateProgress() {
+  const done = completed.filter(Boolean).length;
+  document.getElementById('prog-fill').style.width = (done/3*100) + '%';
+  document.getElementById('prog-label').textContent = done + ' / 3 xong';
+  document.getElementById('score-display').textContent = scores.reduce((a,b)=>a+b,0);
+}
+
+function switchScenario(idx) {
+  currentScenario = idx;
+  currentStep = 0;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', i === idx);
+    t.classList.toggle('completed', completed[i]);
+  });
+  renderContent();
+}
+
+function renderContent() {
+  const sc = scenarios[currentScenario];
+  const s = currentStep;
+  const cont = document.getElementById('main-content');
+
+  let stepsHTML = `<div class="step-nav">`;
+  ['Học từ vựng','Mẫu câu','Hội thoại mẫu','Luyện tập','Roleplay'].forEach((name, i) => {
+    const cls = i === s ? 'active' : (i < s ? 'done' : '');
+    stepsHTML += `<button class="step-btn ${cls}" onclick="goStep(${i})">${i+1}. ${name}</button>`;
+  });
+  stepsHTML += `</div>`;
+
+  let bodyHTML = '';
+
+  if (s === 0) {
+    bodyHTML = renderVocab(sc);
+  } else if (s === 1) {
+    bodyHTML = renderPatterns(sc);
+  } else if (s === 2) {
+    bodyHTML = renderDialog(sc);
+  } else if (s === 3) {
+    bodyHTML = renderQuiz(sc);
+  } else if (s === 4) {
+    bodyHTML = renderRoleplay(sc);
+  }
+
+  cont.innerHTML = `
+    ${renderScenarioHeader(sc)}
+    ${stepsHTML}
+    ${bodyHTML}
+  `;
+}
+
+function renderScenarioHeader(sc) {
+  return `<div class="scenario-header">
+    <div class="scenario-emoji"><i class="ti ${sc.icon}" aria-hidden="true"></i></div>
+    <div>
+      <div class="scenario-title">${sc.title}</div>
+      <div class="scenario-jp">${sc.jp}</div>
+      <div class="scenario-desc">${sc.desc}</div>
+    </div>
+    ${scores[sc.id] > 0 ? `<div style="margin-left:auto"><span class="score-badge"><i class="ti ti-star" style="font-size:12px"></i> ${scores[sc.id]}đ</span></div>` : ''}
+  </div>`;
+}
+
+function renderVocab(sc) {
+  let cards = sc.vocab.map((v,i) => `
+    <div class="vocab-card" id="vc-${sc.id}-${i}" onclick="flipVocab(${sc.id},${i})">
+      <div class="flip-hint">nhấn</div>
+      <div class="jp">${v.jp}</div>
+      <div class="vn">${v.vn}</div>
+    </div>
+  `).join('');
+  return `
+    <div class="learn-section">
+      <div class="section-label"><i class="ti ti-vocabulary" aria-hidden="true"></i> TỪ VỰNG TRỌNG TÂM — nhấn để ghi nhớ</div>
+      <div class="tip-box"><strong>Mẹo:</strong> Nhấn vào thẻ để lật và kiểm tra bạn có nhớ nghĩa không nhé!</div>
+      <div class="vocab-grid">${cards}</div>
+    </div>
+    <div class="action-row"><button class="btn-primary" onclick="goStep(1)">Tiếp theo: Mẫu câu →</button></div>
+  `;
+}
+
+function flipVocab(sid, idx) {
+  const el = document.getElementById(`vc-${sid}-${idx}`);
+  el.classList.toggle('flipped');
+}
+
+function renderPatterns(sc) {
+  let rows = sc.patterns.map(p => `
+    <tr>
+      <td class="jp-cell">${p.jp}</td>
+      <td class="vn-cell">${p.vn}</td>
+    </tr>
+  `).join('');
+  return `
+    <div class="learn-section">
+      <div class="section-label"><i class="ti ti-message-circle-2" aria-hidden="true"></i> MẪU CÂU KÍNH NGỮ</div>
+      <div class="tip-box"><strong>Lưu ý:</strong> Trong khách sạn Nhật Bản, luôn dùng <strong>丁寧語・尊敬語・謙譲語</strong>. Tránh dùng thể thông thường.</div>
+      <table class="pattern-table">
+        <thead><tr><th style="width:55%">Tiếng Nhật (kính ngữ)</th><th>Ý nghĩa tiếng Việt</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goStep(0)">← Từ vựng</button>
+      <button class="btn-primary" onclick="goStep(2)">Tiếp theo: Hội thoại →</button>
+    </div>
+  `;
+}
+
+function renderDialog(sc) {
+  let rows = sc.dialog.map(d => `
+    <div class="dialog-row ${d.role.toLowerCase()}">
+      <div class="role-badge">${d.role}</div>
+      <div class="dialog-content">
+        <div class="jp">${d.jp}</div>
+        <div class="vn">${d.vn}</div>
+      </div>
+    </div>
+  `).join('');
+  return `
+    <div class="learn-section">
+      <div class="section-label"><i class="ti ti-users" aria-hidden="true"></i> HỘI THOẠI MẪU — đọc kỹ trước khi luyện</div>
+      <div class="tip-box"><strong>Gợi ý:</strong> Đọc to hội thoại này ít nhất 2 lần trước khi chuyển sang phần luyện tập nhé!</div>
+      <div class="dialog-box">
+        <div class="dialog-header">NV = Nhân viên &nbsp;|&nbsp; KH = Khách hàng</div>
+        ${rows}
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goStep(1)">← Mẫu câu</button>
+      <button class="btn-primary" onclick="goStep(3)">Luyện tập →</button>
+    </div>
+  `;
+}
+
+function renderQuiz(sc) {
+  let qHTML = sc.quiz.map((q, qi) => renderQuestion(sc, qi)).join('');
+  return `
+    <div class="learn-section">
+      <div class="section-label"><i class="ti ti-pencil" aria-hidden="true"></i> LUYỆN TẬP — kiểm tra hiểu bài</div>
+      ${qHTML}
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goStep(2)">← Hội thoại</button>
+      <button class="btn-gold" onclick="goStep(4)">Roleplay thực tế →</button>
+    </div>
+  `;
+}
+
+function renderQuestion(sc, qi) {
+  const q = sc.quiz[qi];
+  const done = quizAnswered[sc.id][qi];
+  if (q.type === 'choice') {
+    let opts = q.options.map((o, oi) => {
+      let cls = '';
+      if (done) {
+        if (oi === q.answer) cls = 'correct';
+        else if (window[`chosen_${sc.id}_${qi}`] === oi) cls = 'wrong';
+      }
+      return `<button class="option-btn ${cls}" ${done?'disabled':''} onclick="answerChoice(${sc.id},${qi},${oi})">${o}</button>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:1rem">
+        <div class="quiz-question">${q.q}</div>
+        <div class="quiz-hint">${q.hint}</div>
+        <div class="options-grid">${opts}</div>
+        <div class="feedback-msg ${done?'show':''}  ${done && window[`chosen_${sc.id}_${qi}`]===q.answer?'ok':'wrong'}" id="fb-${sc.id}-${qi}">
+          ${done ? (window[`chosen_${sc.id}_${qi}`]===q.answer ? '✓ Chính xác! +10 điểm' : `✗ Chưa đúng. Đáp án: ${q.options[q.answer]}`) : ''}
+        </div>
+      </div>`;
+  } else {
+    const val = window[`fill_${sc.id}_${qi}`] || '';
+    const correct = done && (val.trim() === q.answer || (q.altAnswers||[]).includes(val.trim()));
+    return `
+      <div style="margin-bottom:1rem">
+        <div class="quiz-question">${q.q}</div>
+        <div class="quiz-hint">${q.hint}</div>
+        <div class="fill-input-wrap">
+          <input class="fill-input" id="fi-${sc.id}-${qi}" type="text" value="${val}" placeholder="Nhập câu trả lời bằng tiếng Nhật..." ${done?'disabled':''} />
+          ${!done ? `<button class="check-btn" onclick="answerFill(${sc.id},${qi})">Kiểm tra</button>` : ''}
+        </div>
+        <div class="feedback-msg ${done?'show':''} ${correct?'ok':'wrong'}" id="fb-${sc.id}-${qi}">
+          ${done ? (correct ? '✓ Chính xác! +10 điểm' : `✗ Chưa đúng. Đáp án đúng: 「${q.answer}」`) : ''}
+        </div>
+      </div>`;
+  }
+}
+
+function answerChoice(sid, qi, chosen) {
+  if (quizAnswered[sid][qi]) return;
+  window[`chosen_${sid}_${qi}`] = chosen;
+  quizAnswered[sid][qi] = true;
+  const q = scenarios[sid].quiz[qi];
+  if (chosen === q.answer) { scores[sid] += 10; updateProgress(); }
+  checkAllQuizDone(sid);
+  renderContent();
+}
+
+function answerFill(sid, qi) {
+  const val = document.getElementById(`fi-${sid}-${qi}`).value;
+  window[`fill_${sid}_${qi}`] = val;
+  quizAnswered[sid][qi] = true;
+  const q = scenarios[sid].quiz[qi];
+  const correct = val.trim() === q.answer || (q.altAnswers||[]).includes(val.trim());
+  if (correct) { scores[sid] += 10; updateProgress(); }
+  checkAllQuizDone(sid);
+  renderContent();
+}
+
+function checkAllQuizDone(sid) {
+  if (quizAnswered[sid].every(Boolean)) {
+    completed[sid] = true;
+    document.getElementById(`dot-${sid}`).style.display = 'block';
+    updateProgress();
+  }
+}
+
+function renderRoleplay(sc) {
+  let turns = sc.roleplay.map((t, ti) => {
+    const isNV = t.role === 'NV';
+    const key = `${sc.id}-${ti}`;
+    const revealed = revealedRoleplay[key];
+    if (isNV) {
+      return `
+        <div class="roleplay-turn">
+          <div class="turn-label your-turn"><i class="ti ti-user" aria-hidden="true"></i> BẠN (Nhân viên)</div>
+          <div class="turn-bubble ${revealed ? 'your-response revealed' : 'hidden-resp'}" onclick="revealTurn('${key}')">${t.jp}
+            ${revealed ? `<div style="font-size:11px; margin-top:4px; opacity:0.7">${t.vn}</div>` : ''}
+          </div>
+        </div>`;
+    } else {
+      return `
+        <div class="roleplay-turn">
+          <div class="turn-label their-turn" style="color:var(--gold)"><i class="ti ti-user-circle" aria-hidden="true"></i> KHÁCH</div>
+          <div class="turn-bubble customer">${t.jp}
+            <div style="font-size:11px; margin-top:3px; opacity:0.7">${t.vn}</div>
+          </div>
+        </div>`;
+    }
+  }).join('');
+
+  const allRevealed = sc.roleplay.every((t,ti) => t.role === 'KH' || revealedRoleplay[`${sc.id}-${ti}`]);
+
+  return `
+    <div class="learn-section">
+      <div class="section-label"><i class="ti ti-theater" aria-hidden="true"></i> ROLEPLAY THỰC TẾ</div>
+      <div class="tip-box"><strong>Cách luyện:</strong> Đọc lời khách, sau đó TỰ nói câu trả lời của nhân viên trước khi nhấn xem đáp án. Luyện ít nhất 3 lần!</div>
+      <div class="practice-area">
+        <div class="practice-header">
+          Đối thoại thực hành
+          <span class="mode-badge">nhấn ô xanh để xem đáp án</span>
+        </div>
+        <div class="practice-body">${turns}</div>
+      </div>
+      ${allRevealed ? `
+        <div class="completion-panel show">
+          <h3><i class="ti ti-circle-check" aria-hidden="true"></i> Hoàn thành tình huống!</h3>
+          <p>Điểm của bạn: <strong>${scores[sc.id]} điểm</strong> — Hãy thử lại để thuần thục hơn nhé!</p>
+          <div style="margin-top:0.75rem; display:flex; gap:8px; justify-content:center">
+            <button class="btn-secondary" onclick="resetRoleplay(${sc.id})">Làm lại</button>
+            ${sc.id < 2 ? `<button class="btn-gold" onclick="switchScenario(${sc.id+1})">Tình huống tiếp →</button>` : ''}
+          </div>
+        </div>` : ''}
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goStep(3)">← Luyện tập</button>
+      ${!allRevealed ? `<button class="btn-primary" onclick="revealAll(${sc.id})">Xem tất cả đáp án</button>` : ''}
+    </div>
+  `;
+}
+
+function revealTurn(key) {
+  revealedRoleplay[key] = true;
+  renderContent();
+}
+
+function revealAll(sid) {
+  scenarios[sid].roleplay.forEach((t,ti) => {
+    if (t.role === 'NV') revealedRoleplay[`${sid}-${ti}`] = true;
+  });
+  completed[sid] = true;
+  document.getElementById(`dot-${sid}`).style.display = 'block';
+  updateProgress();
+  renderContent();
+}
+
+function resetRoleplay(sid) {
+  scenarios[sid].roleplay.forEach((t,ti) => {
+    delete revealedRoleplay[`${sid}-${ti}`];
+  });
+  renderContent();
+}
+
+function goStep(s) {
+  currentStep = s;
+  renderContent();
+}
+
+renderContent();
+updateProgress();
+</script>
