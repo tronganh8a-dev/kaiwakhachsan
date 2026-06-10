@@ -1,0 +1,846 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a2e4a;--navy2:#243d5e;--gold:#b8872a;--gold-bg:#fdf3e0;
+  --jade:#1a6b5a;--jade-bg:#e6f4f0;
+  --red:#b03030;--red-bg:#fdf0f0;
+  --purple:#5a3ea0;--purple-bg:#f0ecfc;
+  --amber:#8a5c10;--amber-bg:#fef7e6;
+  --t:var(--color-text-primary);--tm:var(--color-text-secondary);
+  --bg:var(--color-background-primary);--bg2:var(--color-background-secondary);
+  --bd:var(--color-border-tertiary);--bd2:var(--color-border-secondary);
+  --jp:'Noto Sans JP',sans-serif;--vn:'Be Vietnam Pro',sans-serif;
+  --r:var(--border-radius-md);--rl:var(--border-radius-lg)
+}
+body,#app{font-family:var(--vn)}
+
+.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:var(--rl) var(--rl) 0 0}
+.topbar-icon{font-size:22px}
+.topbar-info{flex:1}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-sub{font-size:11px;opacity:.65;font-family:var(--jp);margin-top:2px}
+.stat-pill{background:rgba(255,255,255,.13);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+
+.filter-bar{display:flex;gap:6px;padding:10px 14px;border-bottom:.5px solid var(--bd);background:var(--bg2);flex-wrap:wrap;align-items:center}
+.filter-label{font-size:11px;color:var(--tm);margin-right:2px}
+.fbtn{padding:4px 11px;border-radius:99px;font-size:11px;font-weight:500;cursor:pointer;border:.5px solid var(--bd2);background:var(--bg);color:var(--tm);transition:.15s}
+.fbtn:hover{border-color:var(--navy);color:var(--navy)}
+.fbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.progress-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+.prog-bar{width:100px;height:5px;background:var(--bd2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.prog-txt{font-size:11px;color:var(--tm);white-space:nowrap}
+
+.arena{padding:14px 16px}
+
+.situation-card{border:.5px solid var(--bd2);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.sit-header{padding:10px 14px;display:flex;align-items:center;gap:10px}
+.sit-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sit-cat{font-size:10px;font-weight:700;letter-spacing:.07em;padding:2px 8px;border-radius:99px}
+.sit-title{font-size:13px;font-weight:600;color:var(--t);flex:1}
+.sit-diff{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600}
+.diff-1{background:#e8f4f8;color:#1a5a7a}
+.diff-2{background:var(--amber-bg);color:var(--amber)}
+.diff-3{background:var(--red-bg);color:var(--red)}
+
+.customer-bubble{margin:0 14px 12px;padding:10px 13px;background:var(--amber-bg);border-radius:var(--r);border-left:3px solid var(--gold)}
+.bubble-label{font-size:10px;font-weight:700;letter-spacing:.07em;color:var(--amber);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.bubble-jp{font-family:var(--jp);font-size:15px;color:var(--t);line-height:1.8}
+.ruby-wrap ruby{font-family:var(--jp)}
+.ruby-wrap ruby rt{font-size:9px;color:var(--tm);font-family:var(--jp)}
+.bubble-vn{font-size:11px;color:var(--tm);margin-top:4px}
+
+.answer-zone{margin:0 14px 12px}
+.answer-prompt{font-size:12px;color:var(--tm);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.answer-input{width:100%;border:.5px solid var(--bd2);border-radius:var(--r);padding:9px 11px;font-family:var(--jp);font-size:14px;color:var(--t);background:var(--bg);resize:none;min-height:60px;transition:.15s}
+.answer-input:focus{outline:none;border-color:var(--navy)}
+.answer-input:disabled{background:var(--bg2);color:var(--tm)}
+
+.hint-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.hint-chip{padding:4px 10px;border-radius:99px;font-size:11px;font-family:var(--jp);border:.5px dashed var(--bd2);color:var(--tm);cursor:pointer;background:var(--bg)}
+.hint-chip:hover{border-color:var(--purple);color:var(--purple)}
+.hint-chip.used{background:var(--purple-bg);color:var(--purple);border-color:var(--purple)}
+
+.btn-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.btn-show{padding:7px 15px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--vn)}
+.btn-skip{padding:7px 12px;background:var(--bg);color:var(--tm);border:.5px solid var(--bd2);border-radius:var(--r);font-size:12px;cursor:pointer;font-family:var(--vn)}
+.btn-hint{padding:7px 12px;background:var(--bg);color:var(--purple);border:.5px solid var(--purple);border-radius:var(--r);font-size:12px;cursor:pointer;font-family:var(--vn)}
+.btn-next{padding:7px 16px;background:var(--jade);color:#fff;border:none;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--vn);margin-left:auto}
+
+.model-answer{margin:0 14px 12px;border:.5px solid var(--bd2);border-radius:var(--r);overflow:hidden;display:none}
+.model-answer.show{display:block}
+.ma-header{background:var(--jade);padding:7px 12px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;display:flex;justify-content:space-between;align-items:center}
+.ma-body{padding:10px 12px}
+.ma-jp{font-family:var(--jp);font-size:14px;color:var(--t);line-height:1.9;margin-bottom:5px}
+.ma-vn{font-size:12px;color:var(--tm);line-height:1.6;margin-bottom:8px}
+.ma-notes{display:flex;flex-direction:column;gap:5px}
+.ma-note{font-size:11px;padding:5px 9px;border-radius:var(--r);display:flex;align-items:flex-start;gap:6px}
+.note-keigo{background:var(--purple-bg);color:var(--purple)}
+.note-tip{background:var(--jade-bg);color:var(--jade)}
+.note-warn{background:var(--red-bg);color:var(--red)}
+
+.score-anim{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--jade-bg);color:var(--jade);margin-left:auto}
+
+.nav-end{padding:10px 14px;border-top:.5px solid var(--bd);background:var(--bg2);display:flex;align-items:center;justify-content:space-between}
+.done-banner{background:var(--jade-bg);border:.5px solid var(--jade);border-radius:var(--r);padding:12px 14px;text-align:center;margin-bottom:12px}
+.done-banner h3{font-size:15px;color:var(--jade);margin-bottom:4px}
+.done-banner p{font-size:12px;color:var(--tm)}
+</style>
+
+<h2 class="sr-only">Luyện kaiwa khách sạn N3 — 40 tình huống thực tế, có phiên âm kanji</h2>
+
+<div id="app">
+<div class="topbar">
+  <i class="ti ti-building topbar-icon" aria-hidden="true"></i>
+  <div class="topbar-info">
+    <div class="topbar-title">Kaiwa Khách Sạn — Buổi 1 Nâng Cao</div>
+    <div class="topbar-sub">チェックイン・<ruby>予約<rt>よやく</rt></ruby>・<ruby>対応<rt>たいおう</rt></ruby>の<ruby>会話練習<rt>かいわれんしゅう</rt></ruby></div>
+  </div>
+  <div class="stat-pill"><i class="ti ti-star" style="font-size:13px" aria-hidden="true"></i> <span id="sc">0</span>đ</div>
+  <div class="stat-pill"><i class="ti ti-check" style="font-size:13px" aria-hidden="true"></i> <span id="donecount">0</span>/<span id="totalcount">0</span></div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Chủ đề:</span>
+  <button class="fbtn on" onclick="setFilter('all')">Tất cả</button>
+  <button class="fbtn" onclick="setFilter('checkin')">Check-in</button>
+  <button class="fbtn" onclick="setFilter('yoyaku')">Đặt phòng</button>
+  <button class="fbtn" onclick="setFilter('cancel')">Hủy/Đổi</button>
+  <button class="fbtn" onclick="setFilter('info')">Hỏi thông tin</button>
+  <button class="fbtn" onclick="setFilter('trouble')">Xử lý sự cố</button>
+  <div class="progress-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progfill" style="width:0%"></div></div>
+    <span class="prog-txt" id="progtxt">0%</span>
+  </div>
+</div>
+
+<div class="arena" id="arena"></div>
+</div>
+
+<script>
+const ALL = [
+  {
+    id:1, cat:"checkin", diff:1,
+    title:"Chào đón khách đến",
+    customer:{jp:"<ruby>チェックイン<rt></rt></ruby>をしたいんですが。",vn:"Tôi muốn nhận phòng ạ."},
+    hints:["いらっしゃいませ","ご<ruby>予約<rt>よやく</rt></ruby>","ございますか"],
+    answer:{
+      jp:"いらっしゃいませ。ご<ruby>予約<rt>よやく</rt></ruby>はございますか？",
+      vn:"Xin chào quý khách. Quý khách có đặt phòng trước không ạ?",
+      notes:[
+        {type:"keigo",text:"「いらっしゃいませ」— câu chào bắt buộc đầu tiên, không dùng「こんにちは」với khách"},
+        {type:"keigo",text:"「ございますか」= kính ngữ của「ありますか」— luôn dùng trong khách sạn"},
+        {type:"tip",text:"Luôn mỉm cười và cúi đầu 30° khi nói câu này"}
+      ]
+    }
+  },
+  {
+    id:2, cat:"checkin", diff:1,
+    title:"Hỏi tên khách",
+    customer:{jp:"<ruby>予約<rt>よやく</rt></ruby>しています。",vn:"Tôi có đặt phòng trước ạ."},
+    hints:["お<ruby>名前<rt>なまえ</rt></ruby>","お<ruby>聞<rt>き</rt></ruby>かせ","いただけますでしょうか"],
+    answer:{
+      jp:"ありがとうございます。お<ruby>名前<rt>なまえ</rt></ruby>をお<ruby>聞<rt>き</rt></ruby>かせいただけますでしょうか。",
+      vn:"Cảm ơn quý khách. Xin cho tôi biết họ tên của quý khách ạ?",
+      notes:[
+        {type:"keigo",text:"「お聞かせいただけますでしょうか」= xin hỏi (kính ngữ rất cao), lịch sự hơn「教えてください」rất nhiều"},
+        {type:"warn",text:"Không dùng「名前は？」— quá thô lỗ với khách"}
+      ]
+    }
+  },
+  {
+    id:3, cat:"checkin", diff:1,
+    title:"Xác nhận tên khách",
+    customer:{jp:"<ruby>田中<rt>たなか</rt></ruby>と<ruby>申<rt>もう</rt></ruby>します。",vn:"Tôi họ Tanaka ạ."},
+    hints:["<ruby>田中<rt>たなか</rt></ruby>様","いらっしゃいますね","<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ち"],
+    answer:{
+      jp:"<ruby>田中<rt>たなか</rt></ruby>様でいらっしゃいますね。<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ちいただけますでしょうか。",
+      vn:"Thưa ông/bà Tanaka. Xin vui lòng đợi một chút ạ.",
+      notes:[
+        {type:"keigo",text:"「〇〇様でいらっしゃいますね」— xác nhận tên bằng kính ngữ, KHÔNG nói「〇〇さんですね」"},
+        {type:"keigo",text:"「少々お待ちいただけますでしょうか」— 2 lớp kính ngữ: お待ち + いただく + でしょうか"},
+        {type:"tip",text:"Sau khi xác nhận tên, lặp lại để tránh nhầm lẫn"}
+      ]
+    }
+  },
+  {
+    id:4, cat:"checkin", diff:2,
+    title:"Yêu cầu xuất trình hộ chiếu",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>のカギをもらえますか？",vn:"Tôi có thể lấy chìa khóa phòng không ạ?"},
+    hints:["パスポート","ご<ruby>提示<rt>ていじ</rt></ruby>","お<ruby>願<rt>ねが</rt></ruby>いいたします"],
+    answer:{
+      jp:"かしこまりました。まずパスポートのご<ruby>提示<rt>ていじ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いいたします。",
+      vn:"Vâng ạ. Trước tiên xin quý khách vui lòng xuất trình hộ chiếu ạ.",
+      notes:[
+        {type:"warn",text:"Theo luật Nhật Bản, khách nước ngoài PHẢI xuất trình hộ chiếu — đây là bắt buộc, không phải tùy chọn"},
+        {type:"keigo",text:"「ご提示をお願いいたします」= kính ngữ cao của「見せてください」"},
+        {type:"tip",text:"「まず」= trước tiên — dùng để giải thích thứ tự các bước"}
+      ]
+    }
+  },
+  {
+    id:5, cat:"checkin", diff:1,
+    title:"Đưa chìa khóa phòng",
+    customer:{jp:"<ruby>手続<rt>てつづ</rt></ruby>きは<ruby>終<rt>お</rt></ruby>わりましたか？",vn:"Thủ tục xong chưa ạ?"},
+    hints:["こちら","ルームキー","<ruby>号室<rt>ごうしつ</rt></ruby>","<ruby>階<rt>かい</rt></ruby>"],
+    answer:{
+      jp:"お<ruby>待<rt>ま</rt></ruby>たせいたしました。こちらがルームキーでございます。<ruby>305号室<rt>さんびゃくごごうしつ</rt></ruby>、<ruby>3階<rt>さんがい</rt></ruby>でございます。",
+      vn:"Xin lỗi đã để chờ. Đây là chìa khóa phòng ạ. Phòng 305, tầng 3 ạ.",
+      notes:[
+        {type:"keigo",text:"「お待たせいたしました」— dùng SAU khi khách phải chờ, dù chỉ 30 giây"},
+        {type:"keigo",text:"「でございます」= kính ngữ của「です」— dùng khi chỉ vào vật/địa điểm"},
+        {type:"tip",text:"Đưa chìa khóa bằng 2 tay, mặt chìa quay về phía khách"}
+      ]
+    }
+  },
+  {
+    id:6, cat:"checkin", diff:2,
+    title:"Giải thích giờ check-out",
+    customer:{jp:"チェックアウトは<ruby>何時<rt>なんじ</rt></ruby>ですか？",vn:"Check-out lúc mấy giờ ạ?"},
+    hints:["チェックアウト","<ruby>午前<rt>ごぜん</rt></ruby>10<ruby>時<rt>じ</rt></ruby>","となっております"],
+    answer:{
+      jp:"チェックアウトは<ruby>午前<rt>ごぜん</rt></ruby>10<ruby>時<rt>じ</rt></ruby>となっております。",
+      vn:"Giờ trả phòng là 10 giờ sáng ạ.",
+      notes:[
+        {type:"keigo",text:"「となっております」= quy định của khách sạn, lịch sự hơn「です」vì tránh trực tiếp áp đặt"},
+        {type:"tip",text:"Nếu khách muốn trả phòng muộn hơn, hỏi:「レイトチェックアウトをご希望でしょうか？」"}
+      ]
+    }
+  },
+  {
+    id:7, cat:"checkin", diff:2,
+    title:"Hướng dẫn đường đến phòng",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>はどこですか？",vn:"Phòng tôi ở đâu ạ?"},
+    hints:["エレベーター","<ruby>右手<rt>みぎて</rt></ruby>","ご<ruby>案内<rt>あんない</rt></ruby>いたします"],
+    answer:{
+      jp:"ご<ruby>案内<rt>あんない</rt></ruby>いたします。エレベーターで<ruby>3階<rt>さんがい</rt></ruby>にお<ruby>上<rt>あ</rt></ruby>がりいただき、<ruby>右手<rt>みぎて</rt></ruby>にございます。",
+      vn:"Để tôi chỉ đường ạ. Quý khách đi thang máy lên tầng 3, rẽ phải là thấy ạ.",
+      notes:[
+        {type:"keigo",text:"「ご案内いたします」= tôi xin hướng dẫn (謙譲語 — hạ mình để nâng khách)"},
+        {type:"keigo",text:"「お上がりいただき」= xin mời đi lên (敬語 cho hành động của khách)"},
+        {type:"tip",text:"Chỉ tay bằng 4 ngón, lòng bàn tay ngửa lên — KHÔNG chỉ bằng 1 ngón tay"}
+      ]
+    }
+  },
+  {
+    id:8, cat:"checkin", diff:3,
+    title:"Khách không có đặt phòng",
+    customer:{jp:"<ruby>予約<rt>よやく</rt></ruby>はしていないんですが、<ruby>部屋<rt>へや</rt></ruby>はありますか？",vn:"Tôi không đặt trước, còn phòng không ạ?"},
+    hints:["ウォークイン","<ruby>確認<rt>かくにん</rt></ruby>","<ruby>空室<rt>くうしつ</rt></ruby>"],
+    answer:{
+      jp:"かしこまりました。ただいま<ruby>空室<rt>くうしつ</rt></ruby>をご<ruby>確認<rt>かくにん</rt></ruby>いたします。<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ちください。",
+      vn:"Vâng ạ. Tôi xin kiểm tra phòng trống ngay. Xin vui lòng đợi một chút ạ.",
+      notes:[
+        {type:"tip",text:"Khách đến không đặt trước gọi là「ウォークイン客（きゃく）」"},
+        {type:"keigo",text:"「ただいま〜いたします」= tôi sẽ làm ngay (謙譲語)"},
+        {type:"warn",text:"Không nói「ちょっと待って」— quá thô, phải dùng「少々お待ちください」"}
+      ]
+    }
+  },
+  {
+    id:9, cat:"checkin", diff:3,
+    title:"Thông báo hết phòng",
+    customer:{jp:"<ruby>今日<rt>きょう</rt></ruby>、<ruby>泊<rt>と</rt></ruby>まれますか？",vn:"Hôm nay tôi có thể ở được không ạ?"},
+    hints:["<ruby>大変申<rt>たいへんもう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません","<ruby>満室<rt>まんしつ</rt></ruby>","ご<ruby>利用<rt>りよう</rt></ruby>いただけない"],
+    answer:{
+      jp:"<ruby>大変<rt>たいへん</rt></ruby><ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。ただいま<ruby>満室<rt>まんしつ</rt></ruby>となっており、ご<ruby>利用<rt>りよう</rt></ruby>いただけない<ruby>状況<rt>じょうきょう</rt></ruby>でございます。",
+      vn:"Thành thật xin lỗi quý khách. Hiện tại chúng tôi đã hết phòng ạ.",
+      notes:[
+        {type:"keigo",text:"「大変申し訳ございません」= xin lỗi sâu sắc — dùng khi từ chối hoặc gây bất tiện"},
+        {type:"keigo",text:"「ご利用いただけない状況でございます」= lịch sự hơn「泊まれません」rất nhiều"},
+        {type:"tip",text:"Sau khi từ chối, nên giới thiệu:「近くのホテルをご紹介することもできます」"}
+      ]
+    }
+  },
+  {
+    id:10, cat:"checkin", diff:2,
+    title:"Giới thiệu tiện ích khách sạn",
+    customer:{jp:"<ruby>館内<rt>かんない</rt></ruby>に<ruby>何<rt>なに</rt></ruby>がありますか？",vn:"Trong khách sạn có những gì ạ?"},
+    hints:["レストラン","<ruby>大浴場<rt>だいよくじょう</rt></ruby>","<ruby>2階<rt>にかい</rt></ruby>","ご<ruby>利用<rt>りよう</rt></ruby>いただけます"],
+    answer:{
+      jp:"<ruby>2階<rt>にかい</rt></ruby>にレストラン、<ruby>地下1階<rt>ちかいっかい</rt></ruby>に<ruby>大浴場<rt>だいよくじょう</rt></ruby>がございます。どちらもご<ruby>自由<rt>じゆう</rt></ruby>にご<ruby>利用<rt>りよう</rt></ruby>いただけます。",
+      vn:"Tầng 2 có nhà hàng, tầng B1 có khu tắm công cộng ạ. Quý khách có thể tự do sử dụng ạ.",
+      notes:[
+        {type:"keigo",text:"「ございます」= kính ngữ của「あります」— dùng để chỉ sự tồn tại của vật/địa điểm"},
+        {type:"tip",text:"「大浴場」= khu tắm lớn kiểu Nhật, thường có ở ryokan/khách sạn Nhật truyền thống"}
+      ]
+    }
+  },
+  {
+    id:11, cat:"yoyaku", diff:1,
+    title:"Nhấc máy điện thoại",
+    customer:{jp:"（<ruby>電話<rt>でんわ</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>っている）",vn:"(Điện thoại đang đổ chuông)"},
+    hints:["はい","〇〇ホテル","でございます","<ruby>電話<rt>でんわ</rt></ruby>ありがとうございます"],
+    answer:{
+      jp:"はい、グランドホテルでございます。いつも<ruby>大変<rt>たいへん</rt></ruby>お<ruby>世話<rt>せわ</rt></ruby>になっております。",
+      vn:"Vâng, đây là khách sạn Grand ạ. Cảm ơn quý khách đã luôn ưu ái ạ.",
+      notes:[
+        {type:"keigo",text:"「いつも大変お世話になっております」= câu mở đầu điện thoại kinh doanh — bắt buộc"},
+        {type:"warn",text:"KHÔNG bắt đầu bằng「もしもし」— đó là của người thường, không phải doanh nghiệp"},
+        {type:"tip",text:"Nhấc máy trong vòng 3 hồi chuông, tốt nhất là hồi chuông thứ 2"}
+      ]
+    }
+  },
+  {
+    id:12, cat:"yoyaku", diff:1,
+    title:"Hỏi ngày và số người",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>を<ruby>予約<rt>よやく</rt></ruby>したいんですが。",vn:"Tôi muốn đặt phòng ạ."},
+    hints:["ご<ruby>宿泊<rt>しゅくはく</rt></ruby>日","ご<ruby>人数<rt>にんずう</rt></ruby>","お<ruby>聞<rt>き</rt></ruby>かせいただけますか"],
+    answer:{
+      jp:"ありがとうございます。ご<ruby>宿泊<rt>しゅくはく</rt></ruby>日とご<ruby>人数<rt>にんずう</rt></ruby>をお<ruby>聞<rt>き</rt></ruby>かせいただけますでしょうか。",
+      vn:"Cảm ơn quý khách. Xin cho biết ngày lưu trú và số người ạ?",
+      notes:[
+        {type:"keigo",text:"「ご宿泊日」「ご人数」— thêm「ご」vào danh từ liên quan đến khách = tôn kính ngữ"},
+        {type:"tip",text:"Luôn hỏi 2 thông tin này cùng lúc để tiết kiệm thời gian của khách"}
+      ]
+    }
+  },
+  {
+    id:13, cat:"yoyaku", diff:2,
+    title:"Kiểm tra phòng trống",
+    customer:{jp:"<ruby>3月15日<rt>さんがつじゅうごにち</rt></ruby>から<ruby>2泊<rt>にはく</rt></ruby>、<ruby>2名<rt>ふたり</rt></ruby>でお<ruby>願<rt>ねが</rt></ruby>いします。",vn:"Từ 15/3, 2 đêm, 2 người ạ."},
+    hints:["かしこまりました","<ruby>確認<rt>かくにん</rt></ruby>","<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ち"],
+    answer:{
+      jp:"かしこまりました。<ruby>3月15日<rt>さんがつじゅうごにち</rt></ruby>から<ruby>2泊<rt>にはく</rt></ruby>、<ruby>2名様<rt>ふたりさま</rt></ruby>でございますね。ただいまご<ruby>確認<rt>かくにん</rt></ruby>いたします。<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ちください。",
+      vn:"Vâng ạ. 2 đêm từ 15/3, 2 người đúng không ạ. Tôi xin kiểm tra ngay. Xin đợi một chút ạ.",
+      notes:[
+        {type:"tip",text:"LẶP LẠI thông tin của khách để xác nhận — tránh nhầm lẫn ngày/số người"},
+        {type:"keigo",text:"「2名様」= 2名 + 様 — thêm「様」vào sau số người để tôn trọng"},
+        {type:"keigo",text:"「かしこまりました」= kính ngữ cao nhất của「分かりました」— dùng trong khách sạn"}
+      ]
+    }
+  },
+  {
+    id:14, cat:"yoyaku", diff:2,
+    title:"Xác nhận loại phòng",
+    customer:{jp:"ツインルームはありますか？",vn:"Có phòng twin không ạ?"},
+    hints:["ツインルーム","ご<ruby>用意<rt>ようい</rt></ruby>","〜でよろしいでしょうか"],
+    answer:{
+      jp:"はい、ツインルームをご<ruby>用意<rt>ようい</rt></ruby>できます。ご<ruby>宿泊<rt>しゅくはく</rt></ruby>は<ruby>2名様<rt>ふたりさま</rt></ruby>でよろしいでしょうか？",
+      vn:"Vâng, chúng tôi có thể chuẩn bị phòng twin ạ. Số người lưu trú là 2 người đúng không ạ?",
+      notes:[
+        {type:"keigo",text:"「ご用意できます」= chúng tôi có thể chuẩn bị (謙譲語)"},
+        {type:"tip",text:"「〜でよろしいでしょうか」= xác nhận lại thông tin — dùng nhiều trong dịch vụ"}
+      ]
+    }
+  },
+  {
+    id:15, cat:"yoyaku", diff:2,
+    title:"Xác nhận đặt phòng thành công",
+    customer:{jp:"シングルルームでお<ruby>願<rt>ねが</rt></ruby>いします。",vn:"Tôi muốn đặt phòng single ạ."},
+    hints:["ご<ruby>予約<rt>よやく</rt></ruby>を<ruby>承<rt>うけたまわ</rt></ruby>りました","ありがとうございます"],
+    answer:{
+      jp:"かしこまりました。シングルルーム、ご<ruby>予約<rt>よやく</rt></ruby>を<ruby>承<rt>うけたまわ</rt></ruby>りました。ありがとうございます。",
+      vn:"Vâng ạ. Phòng single, chúng tôi đã nhận đặt phòng ạ. Cảm ơn quý khách.",
+      notes:[
+        {type:"keigo",text:"「承りました（うけたまわりました）」= kính ngữ ULTRA của「受けました/分かりました」— dùng khi nhận đơn đặt hàng/yêu cầu quan trọng"},
+        {type:"tip",text:"Đây là 1 trong những từ kính ngữ quan trọng nhất trong ngành dịch vụ Nhật"}
+      ]
+    }
+  },
+  {
+    id:16, cat:"yoyaku", diff:2,
+    title:"Xin số điện thoại liên lạc",
+    customer:{jp:"<ruby>予約<rt>よやく</rt></ruby>できましたか？",vn:"Đặt phòng được rồi ạ?"},
+    hints:["ご<ruby>連絡先<rt>れんらくさき</rt></ruby>","お<ruby>電話番号<rt>でんわばんごう</rt></ruby>","お<ruby>願<rt>ねが</rt></ruby>いいたします"],
+    answer:{
+      jp:"はい。<ruby>最後<rt>さいご</rt></ruby>にご<ruby>連絡先<rt>れんらくさき</rt></ruby>のお<ruby>電話番号<rt>でんわばんごう</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いいたします。",
+      vn:"Vâng rồi ạ. Cuối cùng xin cho biết số điện thoại liên lạc ạ.",
+      notes:[
+        {type:"tip",text:"「最後に〜お願いいたします」= cuối cùng xin — cách mượt mà để xin thêm thông tin"},
+        {type:"keigo",text:"「お電話番号」= số điện thoại + kính ngữ「お」— tôn trọng hơn「電話番号」"}
+      ]
+    }
+  },
+  {
+    id:17, cat:"yoyaku", diff:3,
+    title:"Xác nhận toàn bộ đặt phòng",
+    customer:{jp:"それで<ruby>全部<rt>ぜんぶ</rt></ruby>ですか？",vn:"Vậy là xong hết rồi ạ?"},
+    hints:["<ruby>復唱<rt>ふくしょう</rt></ruby>","ご<ruby>確認<rt>かくにん</rt></ruby>","<ruby>間違<rt>まちが</rt></ruby>いないか"],
+    answer:{
+      jp:"はい。ご<ruby>予約<rt>よやく</rt></ruby>を<ruby>復唱<rt>ふくしょう</rt></ruby>いたします。<ruby>3月15日<rt>さんがつじゅうごにち</rt></ruby>から<ruby>2泊<rt>にはく</rt></ruby>、シングルルーム、<ruby>1名様<rt>おひとりさま</rt></ruby>でよろしいでしょうか？",
+      vn:"Vâng. Tôi xin đọc lại nội dung đặt phòng. Từ 15/3, 2 đêm, phòng single, 1 người — đúng không ạ?",
+      notes:[
+        {type:"tip",text:"「復唱いたします」= tôi xin nhắc lại — cực kỳ quan trọng, tránh nhầm lẫn"},
+        {type:"warn",text:"Không bao giờ bỏ qua bước này — nhiều khiếu nại xuất phát từ việc không xác nhận lại"},
+        {type:"keigo",text:"「〜でよろしいでしょうか」= cuối câu xác nhận — lịch sự và chuyên nghiệp"}
+      ]
+    }
+  },
+  {
+    id:18, cat:"yoyaku", diff:3,
+    title:"Hỏi về thực đơn ăn kiêng",
+    customer:{jp:"ベジタリアンなんですが、<ruby>食事<rt>しょくじ</rt></ruby>はありますか？",vn:"Tôi ăn chay, có thực đơn không ạ?"},
+    hints:["ベジタリアンメニュー","<ruby>対応<rt>たいおう</rt></ruby>","<ruby>確認<rt>かくにん</rt></ruby>"],
+    answer:{
+      jp:"ありがとうございます。ベジタリアンメニューにつきましては、レストランに<ruby>確認<rt>かくにん</rt></ruby>いたしまして、<ruby>折<rt>お</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>しご<ruby>連絡<rt>れんらく</rt></ruby>いたします。",
+      vn:"Cảm ơn quý khách. Về thực đơn chay, tôi sẽ xác nhận với nhà hàng và liên hệ lại ạ.",
+      notes:[
+        {type:"tip",text:"「〜につきましては」= về vấn đề … — cách mở đầu câu trả lời chuyên nghiệp"},
+        {type:"tip",text:"「折り返しご連絡いたします」= tôi sẽ gọi/liên hệ lại — cụm từ quan trọng khi cần xác nhận thêm"},
+        {type:"warn",text:"Không nên đoán mò — nếu không chắc, hãy xác nhận với bộ phận liên quan"}
+      ]
+    }
+  },
+  {
+    id:19, cat:"yoyaku", diff:3,
+    title:"Đề xuất phòng thay thế khi hết phòng yêu cầu",
+    customer:{jp:"ダブルルームで<ruby>予約<rt>よやく</rt></ruby>したいです。",vn:"Tôi muốn đặt phòng double ạ."},
+    hints:["<ruby>満室<rt>まんしつ</rt></ruby>","ツインルーム","<ruby>代<rt>か</rt></ruby>わりに","いかがでしょうか"],
+    answer:{
+      jp:"<ruby>大変<rt>たいへん</rt></ruby><ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。ダブルルームはただいま<ruby>満室<rt>まんしつ</rt></ruby>でございます。<ruby>代<rt>か</rt></ruby>わりにツインルームはいかがでしょうか？",
+      vn:"Thành thật xin lỗi quý khách. Phòng double hiện đã hết ạ. Thay vào đó phòng twin thì sao ạ?",
+      notes:[
+        {type:"tip",text:"「〜はいかがでしょうか」= … thì sao ạ? — cách đề xuất lịch sự, không áp đặt"},
+        {type:"tip",text:"Luôn đưa ra giải pháp thay thế khi từ chối — đừng chỉ nói không"},
+        {type:"keigo",text:"「代わりに」= thay vào đó — kết nối giữa từ chối và đề xuất mới"}
+      ]
+    }
+  },
+  {
+    id:20, cat:"yoyaku", diff:3,
+    title:"Hỏi về ưu đãi cho khách quen",
+    customer:{jp:"リピーターなんですが、<ruby>割引<rt>わりびき</rt></ruby>はありますか？",vn:"Tôi là khách quen, có giảm giá không ạ?"},
+    hints:["リピーター","ご<ruby>優待<rt>ゆうたい</rt></ruby>","<ruby>確認<rt>かくにん</rt></ruby>"],
+    answer:{
+      jp:"いつもご<ruby>利用<rt>りよう</rt></ruby>いただきありがとうございます。リピーター<ruby>様<rt>さま</rt></ruby>へのご<ruby>優待<rt>ゆうたい</rt></ruby>につきましては、ただいま<ruby>確認<rt>かくにん</rt></ruby>いたします。",
+      vn:"Cảm ơn quý khách đã luôn ủng hộ chúng tôi. Về ưu đãi dành cho khách quen, tôi xin xác nhận ngay ạ.",
+      notes:[
+        {type:"keigo",text:"「いつもご利用いただきありがとうございます」= cảm ơn vì đã thường xuyên sử dụng — câu đặc biệt cho khách quen"},
+        {type:"tip",text:"「リピーター様」= thêm「様」vào để tôn trọng"}
+      ]
+    }
+  },
+  {
+    id:21, cat:"cancel", diff:2,
+    title:"Nhận yêu cầu hủy phòng",
+    customer:{jp:"<ruby>予約<rt>よやく</rt></ruby>をキャンセルしたいんですが。",vn:"Tôi muốn hủy đặt phòng ạ."},
+    hints:["<ruby>宿泊日<rt>しゅくはくび</rt></ruby>","ご<ruby>予約者名<rt>よやくしゃめい</rt></ruby>","<ruby>確認<rt>かくにん</rt></ruby>させていただきます"],
+    answer:{
+      jp:"かしこまりました。ご<ruby>宿泊日<rt>しゅくはくび</rt></ruby>とご<ruby>予約者名<rt>よやくしゃめい</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>させていただいてよろしいでしょうか。",
+      vn:"Vâng ạ. Xin phép xác nhận ngày lưu trú và tên người đặt ạ?",
+      notes:[
+        {type:"tip",text:"Luôn xác nhận 2 thông tin: ngày lưu trú + tên người đặt — để tránh hủy nhầm"},
+        {type:"keigo",text:"「〜させていただいてよろしいでしょうか」= xin phép làm … có được không ạ — cực lịch sự"}
+      ]
+    }
+  },
+  {
+    id:22, cat:"cancel", diff:2,
+    title:"Thông báo phí hủy phòng",
+    customer:{jp:"<ruby>明日<rt>あした</rt></ruby>の<ruby>予約<rt>よやく</rt></ruby>をキャンセルしたいです。",vn:"Tôi muốn hủy đặt phòng ngày mai ạ."},
+    hints:["キャンセル<ruby>料<rt>りょう</rt></ruby>","<ruby>発生<rt>はっせい</rt></ruby>","<ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません"],
+    answer:{
+      jp:"<ruby>大変<rt>たいへん</rt></ruby><ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。<ruby>前日<rt>ぜんじつ</rt></ruby>のキャンセルはキャンセル<ruby>料<rt>りょう</rt></ruby>が<ruby>100%発生<rt>ひゃくぱーせんとはっせい</rt></ruby>いたします。",
+      vn:"Thành thật xin lỗi quý khách. Hủy vào ngày hôm trước sẽ phát sinh phí 100% ạ.",
+      notes:[
+        {type:"warn",text:"「前日キャンセル = 100%」— đây là chính sách phổ biến ở Nhật, cần thông báo rõ ràng"},
+        {type:"keigo",text:"「発生いたします」= sẽ phát sinh — 謙譲語, chuyên nghiệp hơn「かかります」"},
+        {type:"tip",text:"Luôn xin lỗi trước khi thông báo tin xấu — giảm căng thẳng với khách"}
+      ]
+    }
+  },
+  {
+    id:23, cat:"cancel", diff:3,
+    title:"Khách không đồng ý phí hủy",
+    customer:{jp:"キャンセル<ruby>料<rt>りょう</rt></ruby>は<ruby>払<rt>はら</rt></ruby>いたくないです。",vn:"Tôi không muốn trả phí hủy ạ."},
+    hints:["ご<ruby>理解<rt>りかい</rt></ruby>","キャンセルポリシー","<ruby>上<rt>うえ</rt></ruby>の<ruby>者<rt>もの</rt></ruby>"],
+    answer:{
+      jp:"<ruby>誠<rt>まこと</rt></ruby>に<ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。キャンセルポリシーに<ruby>基<rt>もと</rt></ruby>づきご<ruby>請求<rt>せいきゅう</rt></ruby>となります。<ruby>上<rt>うえ</rt></ruby>の<ruby>者<rt>もの</rt></ruby>に<ruby>確認<rt>かくにん</rt></ruby>してよろしいでしょうか？",
+      vn:"Thành thật xin lỗi ạ. Phí được tính theo chính sách hủy phòng ạ. Tôi có thể xin ý kiến cấp trên không ạ?",
+      notes:[
+        {type:"warn",text:"Đây là tình huống khó — KHÔNG tự quyết định miễn phí, phải báo cấp trên"},
+        {type:"tip",text:"「上の者に確認して〜」= cho phép tôi xin ý kiến cấp trên — câu thoát khỏi tình huống khó"},
+        {type:"keigo",text:"「誠に申し訳ございません」= xin lỗi chân thành — mức độ cao hơn「大変申し訳」"}
+      ]
+    }
+  },
+  {
+    id:24, cat:"cancel", diff:2,
+    title:"Thay đổi ngày đặt phòng",
+    customer:{jp:"<ruby>予約<rt>よやく</rt></ruby>の<ruby>日程<rt>にってい</rt></ruby>を<ruby>変更<rt>へんこう</rt></ruby>したいです。",vn:"Tôi muốn thay đổi ngày đặt phòng ạ."},
+    hints:["ご<ruby>変更<rt>へんこう</rt></ruby>","<ruby>可能<rt>かのう</rt></ruby>","<ruby>希望日<rt>きぼうび</rt></ruby>"],
+    answer:{
+      jp:"かしこまりました。ご<ruby>変更<rt>へんこう</rt></ruby>は<ruby>可能<rt>かのう</rt></ruby>でございます。ご<ruby>希望<rt>きぼう</rt></ruby>の<ruby>日程<rt>にってい</rt></ruby>をお<ruby>聞<rt>き</rt></ruby>かせいただけますか？",
+      vn:"Vâng ạ. Có thể thay đổi được ạ. Xin cho biết ngày quý khách muốn đổi sang ạ?",
+      notes:[
+        {type:"keigo",text:"「〜は可能でございます」= … là có thể (kính ngữ) — tích cực hơn là chỉ nói「はい」"},
+        {type:"tip",text:"「ご希望の〜」= … mong muốn của quý khách — cách hỏi tôn trọng"}
+      ]
+    }
+  },
+  {
+    id:25, cat:"cancel", diff:3,
+    title:"Xác nhận thay đổi hoàn tất",
+    customer:{jp:"<ruby>5月22日<rt>ごがつにじゅうににち</rt></ruby>に<ruby>変更<rt>へんこう</rt></ruby>してください。",vn:"Đổi sang ngày 22/5 cho tôi ạ."},
+    hints:["<ruby>変更<rt>へんこう</rt></ruby>いたしました","ご<ruby>確認<rt>かくにん</rt></ruby>ありがとうございます"],
+    answer:{
+      jp:"かしこまりました。<ruby>5月22日<rt>ごがつにじゅうににち</rt></ruby>にご<ruby>変更<rt>へんこう</rt></ruby>いたしました。ご<ruby>確認<rt>かくにん</rt></ruby>ありがとうございます。",
+      vn:"Vâng ạ. Đã thay đổi sang ngày 22/5 rồi ạ. Cảm ơn quý khách đã xác nhận.",
+      notes:[
+        {type:"tip",text:"Lặp lại ngày mới để khách xác nhận lần cuối — tránh nhầm lẫn"},
+        {type:"tip",text:"「ご確認ありがとうございます」= cảm ơn vì đã xác nhận — câu kết thúc lịch sự"}
+      ]
+    }
+  },
+  {
+    id:26, cat:"cancel", diff:3,
+    title:"Hỏi lý do hủy (khéo léo)",
+    customer:{jp:"やっぱりキャンセルします。",vn:"Tôi quyết định hủy phòng ạ."},
+    hints:["かしこまりました","<ruby>差<rt>さ</rt></ruby>し<ruby>支<rt>つか</rt></ruby>えなければ","<ruby>理由<rt>りゆう</rt></ruby>"],
+    answer:{
+      jp:"かしこまりました。<ruby>差<rt>さ</rt></ruby>し<ruby>支<rt>つか</rt></ruby>えなければ、キャンセルのご<ruby>理由<rt>りゆう</rt></ruby>をお<ruby>聞<rt>き</rt></ruby>かせいただけますでしょうか？",
+      vn:"Vâng ạ. Nếu không phiền, xin cho biết lý do hủy phòng ạ?",
+      notes:[
+        {type:"tip",text:"「差し支えなければ」= nếu không phiền — cách hỏi cực kỳ lịch sự, không ép buộc"},
+        {type:"tip",text:"Biết lý do hủy giúp khách sạn cải thiện dịch vụ — quan trọng cho quản lý chất lượng"},
+        {type:"warn",text:"Đừng không hỏi gì — đây là cơ hội thu thập feedback quý giá"}
+      ]
+    }
+  },
+  {
+    id:27, cat:"info", diff:1,
+    title:"Hỏi giờ nhà hàng",
+    customer:{jp:"レストランは<ruby>何時<rt>なんじ</rt></ruby>から<ruby>何時<rt>なんじ</rt></ruby>まで<ruby>開<rt>あ</rt></ruby>いていますか？",vn:"Nhà hàng mở cửa từ mấy giờ đến mấy giờ ạ?"},
+    hints:["<ruby>営業時間<rt>えいぎょうじかん</rt></ruby>","<ruby>午前<rt>ごぜん</rt></ruby>7<ruby>時<rt>じ</rt></ruby>","<ruby>午後<rt>ごご</rt></ruby>10<ruby>時<rt>じ</rt></ruby>","となっております"],
+    answer:{
+      jp:"レストランの<ruby>営業時間<rt>えいぎょうじかん</rt></ruby>は<ruby>午前<rt>ごぜん</rt></ruby>7<ruby>時<rt>じ</rt></ruby>から<ruby>午後<rt>ごご</rt></ruby>10<ruby>時<rt>じ</rt></ruby>までとなっております。",
+      vn:"Giờ mở cửa nhà hàng là từ 7 giờ sáng đến 10 giờ tối ạ.",
+      notes:[
+        {type:"keigo",text:"「営業時間は〜となっております」= câu trả lời chuẩn về giờ làm việc"},
+        {type:"tip",text:"「午前」= sáng (AM), 「午後」= chiều/tối (PM) — dùng cả hai để rõ ràng"}
+      ]
+    }
+  },
+  {
+    id:28, cat:"info", diff:1,
+    title:"Hỏi WiFi",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>でWi-Fiは<ruby>使<rt>つか</rt></ruby>えますか？",vn:"Phòng có dùng WiFi được không ạ?"},
+    hints:["ご<ruby>利用<rt>りよう</rt></ruby>いただけます","パスワード","こちら"],
+    answer:{
+      jp:"はい、<ruby>全室<rt>ぜんしつ</rt></ruby>でWi-Fiをご<ruby>利用<rt>りよう</rt></ruby>いただけます。こちらがパスワードでございます。",
+      vn:"Vâng, tất cả các phòng đều có thể dùng WiFi ạ. Đây là mật khẩu ạ.",
+      notes:[
+        {type:"tip",text:"「全室で〜ご利用いただけます」= tất cả các phòng đều có thể dùng — câu trả lời dứt khoát"},
+        {type:"tip",text:"Nên in sẵn tờ thông tin WiFi để đưa kèm chìa khóa phòng"}
+      ]
+    }
+  },
+  {
+    id:29, cat:"info", diff:2,
+    title:"Hỏi nơi gửi hành lý",
+    customer:{jp:"チェックインまで<ruby>荷物<rt>にもつ</rt></ruby>を<ruby>預<rt>あず</rt></ruby>かってもらえますか？",vn:"Cho tôi gửi hành lý đến giờ check-in được không ạ?"},
+    hints:["もちろん","お<ruby>預<rt>あず</rt></ruby>かりします","<ruby>引換券<rt>ひきかえけん</rt></ruby>"],
+    answer:{
+      jp:"もちろんでございます。こちらでお<ruby>預<rt>あず</rt></ruby>かりいたします。こちらが<ruby>引換券<rt>ひきかえけん</rt></ruby>でございますので、<ruby>大切<rt>たいせつ</rt></ruby>にお<ruby>持<rt>も</rt></ruby>ちください。",
+      vn:"Tất nhiên rồi ạ. Chúng tôi sẽ giữ hộ ạ. Đây là phiếu nhận lại, xin quý khách giữ cẩn thận ạ.",
+      notes:[
+        {type:"tip",text:"「もちろんでございます」= tất nhiên — tích cực hơn「はい、できます」"},
+        {type:"tip",text:"「引換券（ひきかえけん）」= phiếu đổi hàng — luôn đưa khi nhận gửi đồ"},
+        {type:"warn",text:"Phải kiểm tra và ghi chú tình trạng hành lý trước khi nhận"}
+      ]
+    }
+  },
+  {
+    id:30, cat:"info", diff:2,
+    title:"Hỏi phương tiện di chuyển",
+    customer:{jp:"<ruby>駅<rt>えき</rt></ruby>までどうやって<ruby>行<rt>い</rt></ruby>けばいいですか？",vn:"Đi đến ga tàu thì đi thế nào ạ?"},
+    hints:["シャトルバス","<ruby>徒歩<rt>とほ</rt></ruby>","<ruby>分<rt>ふん</rt></ruby>","ご<ruby>利用<rt>りよう</rt></ruby>いただけます"],
+    answer:{
+      jp:"<ruby>徒歩<rt>とほ</rt></ruby>で<ruby>約<rt>やく</rt></ruby>10<ruby>分<rt>ぷん</rt></ruby>でございます。または、<ruby>無料<rt>むりょう</rt></ruby>シャトルバスもご<ruby>利用<rt>りよう</rt></ruby>いただけます。",
+      vn:"Đi bộ khoảng 10 phút ạ. Hoặc quý khách cũng có thể dùng xe đưa đón miễn phí ạ.",
+      notes:[
+        {type:"tip",text:"「または」= hoặc — cung cấp nhiều lựa chọn cho khách"},
+        {type:"tip",text:"「無料〜」= miễn phí … — thông tin quan trọng khách muốn biết"},
+        {type:"keigo",text:"「〜でございます」sau khoảng cách/thời gian — lịch sự hơn「です」"}
+      ]
+    }
+  },
+  {
+    id:31, cat:"info", diff:2,
+    title:"Hỏi dịch vụ in tài liệu",
+    customer:{jp:"プリンターを<ruby>使<rt>つか</rt></ruby>いたいんですが。",vn:"Tôi muốn dùng máy in ạ."},
+    hints:["ビジネスセンター","<ruby>3階<rt>さんがい</rt></ruby>","ご<ruby>利用<rt>りよう</rt></ruby>いただけます"],
+    answer:{
+      jp:"<ruby>3階<rt>さんがい</rt></ruby>のビジネスセンターにプリンターがございます。ご<ruby>自由<rt>じゆう</rt></ruby>にご<ruby>利用<rt>りよう</rt></ruby>いただけます。",
+      vn:"Có máy in ở Trung tâm dịch vụ văn phòng tầng 3 ạ. Quý khách tự do sử dụng ạ.",
+      notes:[
+        {type:"tip",text:"「ご自由にご利用いただけます」= tự do sử dụng — cụm từ hay dùng cho tiện ích công cộng"}
+      ]
+    }
+  },
+  {
+    id:32, cat:"info", diff:3,
+    title:"Khách hỏi về văn hóa địa phương",
+    customer:{jp:"<ruby>近<rt>ちか</rt></ruby>くに<ruby>観光地<rt>かんこうち</rt></ruby>はありますか？",vn:"Gần đây có điểm du lịch nào không ạ?"},
+    hints:["コンシェルジュ","ご<ruby>案内<rt>あんない</rt></ruby>","パンフレット"],
+    answer:{
+      jp:"はい、ございます。コンシェルジュデスクにてパンフレットをご<ruby>用意<rt>ようい</rt></ruby>しております。また、ご<ruby>希望<rt>きぼう</rt></ruby>があればご<ruby>案内<rt>あんない</rt></ruby>いたします。",
+      vn:"Vâng, có ạ. Ở quầy concierge có sẵn brochure ạ. Ngoài ra nếu quý khách muốn, chúng tôi có thể hướng dẫn ạ.",
+      notes:[
+        {type:"tip",text:"Nhân viên front desk ở khách sạn nhỏ thường kiêm luôn vai trò concierge"},
+        {type:"keigo",text:"「〜ご用意しております」= chúng tôi đã chuẩn bị sẵn … — chủ động và chuyên nghiệp"}
+      ]
+    }
+  },
+  {
+    id:33, cat:"trouble", diff:2,
+    title:"Khách phàn nàn điều hòa",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>のエアコンが<ruby>壊<rt>こわ</rt></ruby>れています。",vn:"Điều hòa phòng tôi bị hỏng ạ."},
+    hints:["<ruby>誠<rt>まこと</rt></ruby>に<ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>","すぐに","<ruby>確認<rt>かくにん</rt></ruby>","<ruby>伺<rt>うかが</rt></ruby>います"],
+    answer:{
+      jp:"<ruby>誠<rt>まこと</rt></ruby>に<ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。すぐにメンテナンスを<ruby>伺<rt>うかが</rt></ruby>わせていただきます。しばらくお<ruby>待<rt>ま</rt></ruby>ちください。",
+      vn:"Thành thật xin lỗi quý khách. Tôi sẽ để nhân viên bảo trì lên ngay ạ. Xin đợi một chút ạ.",
+      notes:[
+        {type:"tip",text:"「〜を伺わせていただきます」= để … đến — cách nói khiêm tốn khi điều người lên"},
+        {type:"warn",text:"Không hứa thời gian cụ thể nếu không chắc — dùng「できるだけ早く」"},
+        {type:"keigo",text:"「誠に申し訳ございません」= xin lỗi chân thành nhất — dùng cho sự cố nghiêm trọng"}
+      ]
+    }
+  },
+  {
+    id:34, cat:"trouble", diff:2,
+    title:"Khách mất chìa khóa phòng",
+    customer:{jp:"ルームキーをなくしてしまいました。",vn:"Tôi đánh mất chìa khóa phòng rồi ạ."},
+    hints:["ご<ruby>確認<rt>かくにん</rt></ruby>","<ruby>再発行<rt>さいはっこう</rt></ruby>","パスポート","<ruby>本人確認<rt>ほんにんかくにん</rt></ruby>"],
+    answer:{
+      jp:"かしこまりました。ご<ruby>本人確認<rt>ほんにんかくにん</rt></ruby>のためパスポートをご<ruby>提示<rt>ていじ</rt></ruby>いただけますか。<ruby>確認後<rt>かくにんご</rt></ruby>、ルームキーを<ruby>再発行<rt>さいはっこう</rt></ruby>いたします。",
+      vn:"Vâng ạ. Để xác nhận danh tính, xin quý khách vui lòng xuất trình hộ chiếu. Sau khi xác nhận sẽ cấp lại chìa khóa ạ.",
+      notes:[
+        {type:"warn",text:"Phải xác nhận danh tính TRƯỚC khi cấp chìa khóa mới — quy trình bảo mật bắt buộc"},
+        {type:"tip",text:"「再発行いたします」= sẽ cấp lại — cần ghi chú vào hệ thống và vô hiệu hóa chìa cũ"},
+        {type:"keigo",text:"「ご本人確認」= xác nhận danh tính (kính ngữ)"}
+      ]
+    }
+  },
+  {
+    id:35, cat:"trouble", diff:3,
+    title:"Khách phàn nàn tiếng ồn",
+    customer:{jp:"<ruby>隣<rt>となり</rt></ruby>の<ruby>部屋<rt>へや</rt></ruby>がうるさくて<ruby>眠<rt>ねむ</rt></ruby>れません！",vn:"Phòng bên cạnh ồn ào quá tôi không ngủ được!"},
+    hints:["<ruby>大変<rt>たいへん</rt></ruby><ruby>失礼<rt>しつれい</rt></ruby>","すぐに<ruby>確認<rt>かくにん</rt></ruby>","<ruby>別室<rt>べっしつ</rt></ruby>","いかがでしょうか"],
+    answer:{
+      jp:"<ruby>大変<rt>たいへん</rt></ruby><ruby>失礼<rt>しつれい</rt></ruby>いたしました。すぐに<ruby>確認<rt>かくにん</rt></ruby>いたします。また<ruby>別室<rt>べっしつ</rt></ruby>へのご<ruby>移動<rt>いどう</rt></ruby>はいかがでしょうか？",
+      vn:"Thật thất lễ ạ. Tôi sẽ kiểm tra ngay. Ngoài ra quý khách có muốn chuyển sang phòng khác không ạ?",
+      notes:[
+        {type:"tip",text:"3 bước xử lý: xin lỗi → xử lý vấn đề → đề xuất giải pháp thay thế"},
+        {type:"keigo",text:"「大変失礼いたしました」= đã thất lễ với quý khách — dùng khi lỗi rõ ràng từ phía khách sạn"},
+        {type:"tip",text:"「別室へのご移動はいかがでしょうか」= đề xuất đổi phòng — luôn có phương án B"}
+      ]
+    }
+  },
+  {
+    id:36, cat:"trouble", diff:3,
+    title:"Khách bị thất lạc đồ",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>に<ruby>財布<rt>さいふ</rt></ruby>を<ruby>忘<rt>わす</rt></ruby>れてきました。",vn:"Tôi để quên ví trong phòng rồi ạ."},
+    hints:["ハウスキーパー","<ruby>確認<rt>かくにん</rt></ruby>","<ruby>折<rt>お</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>し"],
+    answer:{
+      jp:"かしこまりました。ハウスキーパーに<ruby>確認<rt>かくにん</rt></ruby>いたします。<ruby>見<rt>み</rt></ruby>つかり<ruby>次第<rt>しだい</rt></ruby>、ご<ruby>連絡<rt>れんらく</rt></ruby>いたします。",
+      vn:"Vâng ạ. Tôi sẽ xác nhận với nhân viên dọn phòng. Ngay khi tìm thấy sẽ liên hệ ạ.",
+      notes:[
+        {type:"tip",text:"「〜次第、〜いたします」= ngay khi … sẽ … — cụm từ quan trọng thể hiện sự nhanh nhẹn"},
+        {type:"warn",text:"Phải ghi chép mô tả đồ vật và số phòng — tránh nhầm với đồ thất lạc khác"},
+        {type:"tip",text:"Đồ thất lạc được bảo quản ít nhất 3 tháng theo quy định của nhiều khách sạn Nhật"}
+      ]
+    }
+  },
+  {
+    id:37, cat:"trouble", diff:3,
+    title:"Khách bị ốm cần hỗ trợ",
+    customer:{jp:"<ruby>気分<rt>きぶん</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>くて…<ruby>病院<rt>びょういん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。",vn:"Tôi cảm thấy không khỏe… tôi muốn đến bệnh viện ạ."},
+    hints:["<ruby>救急<rt>きゅうきゅう</rt></ruby>","タクシー","ご<ruby>手配<rt>てはい</rt></ruby>","すぐに"],
+    answer:{
+      jp:"かしこまりました。すぐにタクシーをご<ruby>手配<rt>てはい</rt></ruby>いたします。<ruby>近<rt>ちか</rt></ruby>くの<ruby>病院<rt>びょういん</rt></ruby>をご<ruby>案内<rt>あんない</rt></ruby>することもできます。",
+      vn:"Vâng ạ. Tôi sẽ gọi taxi ngay ạ. Chúng tôi cũng có thể chỉ bệnh viện gần đây ạ.",
+      notes:[
+        {type:"warn",text:"Nếu khách bất tỉnh hoặc nặng: gọi ngay 119 (cứu thương) — ưu tiên an toàn"},
+        {type:"tip",text:"「ご手配いたします」= tôi sẽ thu xếp — 謙譲語 cho hành động sắp xếp dịch vụ"},
+        {type:"tip",text:"Nên có sẵn danh sách bệnh viện gần khách sạn để cung cấp nhanh"}
+      ]
+    }
+  },
+  {
+    id:38, cat:"trouble", diff:3,
+    title:"Khách xin giảm giá vì sự cố",
+    customer:{jp:"<ruby>部屋<rt>へや</rt></ruby>に<ruby>問題<rt>もんだい</rt></ruby>があったので<ruby>割引<rt>わりびき</rt></ruby>してほしいです。",vn:"Phòng có vấn đề nên tôi muốn được giảm giá ạ."},
+    hints:["<ruby>上<rt>うえ</rt></ruby>の<ruby>者<rt>もの</rt></ruby>","<ruby>確認<rt>かくにん</rt></ruby>","ご<ruby>不便<rt>ふべん</rt></ruby>","おかけして"],
+    answer:{
+      jp:"ご<ruby>不便<rt>ふべん</rt></ruby>をおかけして<ruby>誠<rt>まこと</rt></ruby>に<ruby>申<rt>もう</rt></ruby>し<ruby>訳<rt>わけ</rt></ruby>ございません。<ruby>上<rt>うえ</rt></ruby>の<ruby>者<rt>もの</rt></ruby>に<ruby>確認<rt>かくにん</rt></ruby>してから<ruby>折<rt>お</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>しご<ruby>連絡<rt>れんらく</rt></ruby>いたします。",
+      vn:"Thành thật xin lỗi vì đã gây bất tiện cho quý khách. Tôi sẽ xin ý kiến cấp trên rồi liên hệ lại ạ.",
+      notes:[
+        {type:"warn",text:"Không tự quyết định giảm giá — luôn báo cấp trên, dù bạn nghĩ khách đúng"},
+        {type:"tip",text:"「ご不便をおかけして」= vì đã gây bất tiện cho … — câu xin lỗi kép với kính ngữ"},
+        {type:"tip",text:"「折り返しご連絡いたします」= sẽ liên lạc lại — đừng để khách chờ không có thông tin"}
+      ]
+    }
+  },
+  {
+    id:39, cat:"checkin", diff:3,
+    title:"Khách early check-in",
+    customer:{jp:"チェックイン<ruby>時間<rt>じかん</rt></ruby>より<ruby>早<rt>はや</rt></ruby>く<ruby>来<rt>き</rt></ruby>てしまいました。",vn:"Tôi đến sớm hơn giờ check-in rồi ạ."},
+    hints:["<ruby>準備<rt>じゅんび</rt></ruby>","<ruby>確認<rt>かくにん</rt></ruby>","<ruby>荷物<rt>にもつ</rt></ruby>","お<ruby>預<rt>あず</rt></ruby>かり"],
+    answer:{
+      jp:"かしこまりました。ただいまお<ruby>部屋<rt>へや</rt></ruby>の<ruby>準備<rt>じゅんび</rt></ruby>ができているか<ruby>確認<rt>かくにん</rt></ruby>いたします。もし<ruby>準備<rt>じゅんび</rt></ruby>ができていない<ruby>場合<rt>ばあい</rt></ruby>は、お<ruby>荷物<rt>にもつ</rt></ruby>をお<ruby>預<rt>あず</rt></ruby>かりいたします。",
+      vn:"Vâng ạ. Tôi sẽ kiểm tra phòng có sẵn sàng chưa. Nếu chưa sẵn sàng, chúng tôi sẽ giữ hành lý cho ạ.",
+      notes:[
+        {type:"tip",text:"Nếu phòng sẵn sàng: có thể cho vào sớm (early check-in), đôi khi tính thêm phí"},
+        {type:"tip",text:"Luôn đề xuất giữ hành lý — khách có thể dạo chơi trong khi chờ"},
+        {type:"keigo",text:"「お部屋の準備ができているか確認いたします」= cấu trúc câu gián tiếp + 謙譲語"}
+      ]
+    }
+  },
+  {
+    id:40, cat:"checkin", diff:3,
+    title:"Kết thúc check-in — chúc tạm biệt",
+    customer:{jp:"（チェックインが<ruby>完了<rt>かんりょう</rt></ruby>した）",vn:"(Check-in vừa hoàn tất)"},
+    hints:["ごゆっくり","お<ruby>楽<rt>たの</rt></ruby>しみください","ご<ruby>不明<rt>ふめい</rt></ruby>な<ruby>点<rt>てん</rt></ruby>","いつでも"],
+    answer:{
+      jp:"ごゆっくりお<ruby>楽<rt>たの</rt></ruby>しみください。ご<ruby>不明<rt>ふめい</rt></ruby>な<ruby>点<rt>てん</rt></ruby>がございましたら、いつでもフロントまでお<ruby>申<rt>もう</rt></ruby>し<ruby>付<rt>つ</rt></ruby>けください。",
+      vn:"Kính chúc quý khách nghỉ ngơi thoải mái. Nếu có bất cứ thắc mắc gì, xin hãy liên hệ quầy lễ tân bất cứ lúc nào ạ.",
+      notes:[
+        {type:"tip",text:"「ごゆっくりお楽しみください」= câu tiễn khách quan trọng nhất — tạo ấn tượng tốt cuối cùng"},
+        {type:"keigo",text:"「お申し付けください」= xin hãy cho biết/yêu cầu — kính ngữ cao hơn「言ってください」"},
+        {type:"tip",text:"Cúi đầu 30° và giữ tư thế cho đến khi khách bước vào thang máy hoặc rời tầm nhìn"}
+      ]
+    }
+  }
+];
+
+let filtered = [...ALL];
+let revealed = {};
+let usedHints = {};
+let score = 0;
+let doneSet = new Set();
+let currentFilter = 'all';
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+  filtered = f === 'all' ? [...ALL] : ALL.filter(x => x.cat === f);
+  render();
+}
+
+function render() {
+  document.getElementById('totalcount').textContent = filtered.length;
+  document.getElementById('donecount').textContent = [...doneSet].filter(id => filtered.find(x=>x.id===id)).length;
+  const pct = filtered.length ? Math.round([...doneSet].filter(id=>filtered.find(x=>x.id===id)).length/filtered.length*100) : 0;
+  document.getElementById('progfill').style.width = pct + '%';
+  document.getElementById('progtxt').textContent = pct + '%';
+  document.getElementById('sc').textContent = score;
+
+  const catColors = {checkin:'#1a2e4a',yoyaku:'#1a6b5a',cancel:'#b03030',info:'#5a3ea0',trouble:'#8a5c10'};
+  const catNames = {checkin:'Check-in',yoyaku:'Đặt phòng',cancel:'Hủy/Đổi',info:'Hỏi info',trouble:'Xử lý sự cố'};
+  const diffLabel = ['','Cơ bản','Trung cấp','Nâng cao'];
+  const diffCls = ['','diff-1','diff-2','diff-3'];
+
+  let html = '';
+  if(filtered.length === 0){html='<p style="color:var(--tm);font-size:13px;padding:1rem">Không có tình huống nào.</p>';}
+  filtered.forEach(sc => {
+    const isRevealed = revealed[sc.id];
+    const isDone = doneSet.has(sc.id);
+    const hKey = sc.id;
+    const usedH = usedHints[hKey] || [];
+
+    const hintHTML = sc.hints.map((h,hi) => {
+      const u = usedH.includes(hi);
+      return `<span class="hint-chip ${u?'used':''}" onclick="useHint(${sc.id},${hi})">${u ? h : '?'} <i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i></span>`;
+    }).join('');
+
+    const noteHTML = (isRevealed ? sc.answer.notes.map(n =>
+      `<div class="ma-note note-${n.type}"><i class="ti ti-${n.type==='keigo'?'award':n.type==='warn'?'alert-triangle':'bulb'}" style="font-size:13px;flex-shrink:0" aria-hidden="true"></i><span>${n.text}</span></div>`
+    ).join('') : '');
+
+    html += `<div class="situation-card" id="card-${sc.id}">
+      <div class="sit-header" style="background:${isDone?'var(--jade-bg)':'var(--bg2)'}">
+        <div class="sit-num" style="background:${catColors[sc.cat]};color:#fff">${sc.id}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span class="sit-cat" style="background:${catColors[sc.cat]}22;color:${catColors[sc.cat]}">${catNames[sc.cat]}</span>
+            <span class="sit-diff ${diffCls[sc.diff]}">${diffLabel[sc.diff]}</span>
+            <span class="sit-title">${sc.title}</span>
+          </div>
+        </div>
+        ${isDone ? `<span style="font-size:12px;color:var(--jade);font-weight:600"><i class="ti ti-circle-check" style="font-size:14px;vertical-align:-2px" aria-hidden="true"></i> Xong</span>` : ''}
+      </div>
+
+      <div class="customer-bubble">
+        <div class="bubble-label"><i class="ti ti-user-circle" style="font-size:13px" aria-hidden="true"></i> KHÁCH NÓI</div>
+        <div class="bubble-jp ruby-wrap">${sc.customer.jp}</div>
+        <div class="bubble-vn">${sc.customer.vn}</div>
+      </div>
+
+      <div class="answer-zone">
+        <div class="answer-prompt"><i class="ti ti-pencil" style="font-size:13px" aria-hidden="true"></i> Bạn (nhân viên) sẽ trả lời thế nào?</div>
+        <textarea class="answer-input" id="inp-${sc.id}" placeholder="Nhập câu trả lời tiếng Nhật của bạn tại đây..." ${isRevealed?'disabled':''}>${isRevealed ? sc.answer.jp.replace(/<[^>]+>/g,'') : ''}</textarea>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;color:var(--tm);margin-bottom:5px"><i class="ti ti-bulb" style="font-size:12px" aria-hidden="true"></i> Gợi ý từ vựng (nhấn để hiện):</div>
+          <div class="hint-chips">${hintHTML}</div>
+        </div>
+        <div class="btn-row">
+          ${!isRevealed ? `<button class="btn-show" onclick="reveal(${sc.id})"><i class="ti ti-eye" style="font-size:13px;vertical-align:-1px" aria-hidden="true"></i> Xem đáp án</button>` : `<button class="btn-show" style="background:var(--jade)" onclick="markDone(${sc.id})"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px" aria-hidden="true"></i> Đúng rồi! +${10-usedH.length*2}đ</button>`}
+          <button class="btn-hint" onclick="revealAllHints(${sc.id})"><i class="ti ti-eye-table" style="font-size:13px;vertical-align:-1px" aria-hidden="true"></i> Xem tất cả gợi ý</button>
+          <button class="btn-skip" onclick="scrollToNext(${sc.id})">Bỏ qua <i class="ti ti-arrow-down" style="font-size:12px;vertical-align:-1px" aria-hidden="true"></i></button>
+        </div>
+      </div>
+
+      <div class="model-answer ${isRevealed?'show':''}" id="ma-${sc.id}">
+        <div class="ma-header">
+          <span><i class="ti ti-check-circle" style="font-size:13px;vertical-align:-1px" aria-hidden="true"></i> Đáp án chuẩn</span>
+          ${isDone ? '<span style="font-size:11px;opacity:.8">Đã hoàn thành</span>' : ''}
+        </div>
+        <div class="ma-body">
+          <div class="ma-jp ruby-wrap">${sc.answer.jp}</div>
+          <div class="ma-vn">${sc.answer.vn}</div>
+          <div class="ma-notes">${noteHTML}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('arena').innerHTML = html;
+}
+
+function useHint(sid, hi) {
+  if(!usedHints[sid]) usedHints[sid] = [];
+  if(!usedHints[sid].includes(hi)) usedHints[sid].push(hi);
+  render();
+}
+
+function revealAllHints(sid) {
+  const sc = ALL.find(x=>x.id===sid);
+  usedHints[sid] = sc.hints.map((_,i)=>i);
+  render();
+}
+
+function reveal(sid) {
+  revealed[sid] = true;
+  render();
+  setTimeout(()=>{
+    const ma = document.getElementById('ma-'+sid);
+    if(ma) ma.scrollIntoView({behavior:'smooth',block:'center'});
+  },100);
+}
+
+function markDone(sid) {
+  if(!doneSet.has(sid)) {
+    doneSet.add(sid);
+    const used = (usedHints[sid]||[]).length;
+    const pts = Math.max(2, 10 - used*2);
+    score += pts;
+  }
+  render();
+}
+
+function scrollToNext(sid) {
+  const idx = filtered.findIndex(x=>x.id===sid);
+  if(idx < filtered.length-1) {
+    const nextId = filtered[idx+1].id;
+    const el = document.getElementById('card-'+nextId);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+render();
+</script>
